@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Afrology — Learn African Languages, Grow Your Garden</title>
+<link rel="icon" type="image/svg+xml" href="afrology_icon.svg">
+<link rel="apple-touch-icon" href="afrology_icon.png">
+<style>
+  :root{
+    --clay:#3ac6ff; --clay-d:#1f9fd6; --ochre:#f0c24c; --gold:#f2cf63;
+    --brown:#e8f2fb; --brown-l:#c3d6e6; --cream:#0d1a28; --cream-d:#1a2c3e;
+    --sage:#47c98a; --sage-d:#2f9d68; --indigo:#3b4a8b; --leaf:#3fb6ff;
+    --ink:#e8f2fb; --muted:#8aa3b8; --line:#274056; --card:#16273a;
+    --good:#4fd18f; --good-l:#15342a; --bad:#ff6b6b; --bad-l:#3a1d20;
+    --cyanglow:#7fe3ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Trebuchet MS','Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:#070f18;min-height:100vh}
+  #app{max-width:640px;margin:0 auto;min-height:100vh;background:linear-gradient(180deg,#101f30 0%,#0b1522 100%);display:flex;flex-direction:column;box-shadow:0 0 40px rgba(0,0,0,.5);position:relative;overflow:hidden}
+  .hidden{display:none!important}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+  .kente{height:10px;flex-shrink:0;background:repeating-linear-gradient(45deg,#f2cf63 0 10px,#3ac6ff 10px 20px,#1f9fd6 20px 30px,#0c2a40 30px 40px,#7fe3ff 40px 50px)}
+  #tabs{flex:1;overflow-y:auto}
+  .tab{padding-bottom:20px}
+  .btn{display:inline-block;font-weight:800;letter-spacing:.4px;text-transform:uppercase;border-radius:16px;padding:14px 20px;font-size:15px;transition:filter .1s,transform .05s;border-bottom:4px solid rgba(0,0,0,.22)}
+  .btn:active{transform:translateY(2px);border-bottom-width:2px}
+  .btn-primary{background:var(--clay);color:#06263a;border-bottom-color:var(--clay-d)}
+  .btn-gold{background:var(--ochre);color:var(--brown);border-bottom-color:#b57e26}
+  .btn-sage{background:var(--sage);color:#fff;border-bottom-color:var(--sage-d)}
+  .btn-grey{background:#e7dcc6;color:#b3a081;border-bottom-color:#d6c8ac;cursor:not-allowed}
+  .btn-ghost{background:var(--card);color:var(--clay);border:2px solid var(--line);border-bottom-width:4px}
+  .btn-wide{width:100%}
+  /* bottom nav */
+  #bottomnav{display:flex;background:var(--card);border-top:2px solid var(--line);flex-shrink:0}
+  .navbtn{flex:1;padding:8px 0 7px;text-align:center;font-size:11px;font-weight:800;color:var(--muted);border-top:3px solid transparent}
+  .navbtn .ic{font-size:23px;display:block;line-height:1.2;filter:grayscale(.3);opacity:.7}
+  .navbtn.active{color:var(--clay);border-top-color:var(--clay)}
+  .navbtn.active .ic{filter:none;opacity:1;transform:scale(1.08)}
+  /* learn top bar */
+  .lbar{display:flex;align-items:center;gap:8px;padding:12px 14px 6px}
+  .flagbtn{font-size:24px;background:var(--card);border:2px solid var(--line);border-radius:12px;width:44px;height:38px;display:flex;align-items:center;justify-content:center}
+  .chip{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:5px 11px;font-weight:900;font-size:14px;color:var(--brown)}
+  .unit-banner{margin:8px 14px 4px;background:linear-gradient(135deg,#1f6fa0,#0f3b58);color:#eaf6ff;border-radius:16px;padding:12px 16px;border:1px solid #2f6f98;border-bottom:5px solid #0c2c44;box-shadow:0 0 20px rgba(58,198,255,.18)}
+  .ub-sub{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;opacity:.9}
+  .ub-title{font-size:20px;font-weight:900;margin-top:2px}
+  .ub-desc{font-size:12px;opacity:.92;margin-top:3px;line-height:1.4}
+  /* learn path */
+  /* Original "safari trail" — rounded tiles with icons + dashed trail (distinct look) */
+  .path{display:flex;flex-direction:column;align-items:center;padding:22px 0 46px;position:relative}
+  .trail-step{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;padding-top:30px;padding-bottom:4px}
+  .trail-step:first-child{padding-top:6px}
+  .trail-step:not(:first-child)::before{content:"";position:absolute;top:2px;left:50%;transform:translateX(-50%);height:24px;border-left:3px dashed #2f4c66}
+  .tile{width:78px;height:78px;border-radius:26px;display:flex;align-items:center;justify-content:center;font-size:34px;background:var(--card);border:2px solid var(--line);border-bottom-width:6px;position:relative;transition:box-shadow .18s ease,transform .16s ease}
+  .tile:active{transform:translateY(3px);border-bottom-width:3px}
+  .tile.done{border-color:var(--sage);background:#153a2d}
+  .tile.current{border-color:var(--clay);background:#123a52;box-shadow:0 0 24px rgba(58,198,255,.55)}
+  .tile.locked{background:#14232f;filter:grayscale(.35);opacity:.6;cursor:pointer;transition:box-shadow .22s ease,transform .18s ease,opacity .2s,filter .2s}
+  .trail-step:hover .tile.locked,.trail-step.peek .tile.locked{opacity:.98;filter:none;box-shadow:0 0 22px rgba(58,198,255,.6);transform:translateY(-3px) scale(1.05)}
+  .tile-badge{position:absolute;top:-8px;right:-8px;width:26px;height:26px;border-radius:50%;background:var(--sage);color:#06261a;font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #0b1522}
+  .tile-lock{position:absolute;bottom:-8px;right:-8px;width:26px;height:26px;border-radius:50%;background:#0b1522;border:2px solid #2f4c66;font-size:12px;display:flex;align-items:center;justify-content:center}
+  .tile-label{font-size:12.5px;font-weight:800;color:var(--brown-l);max-width:130px;text-align:center;line-height:1.2}
+  .trail-step.cur .tile-label{color:var(--clay)}
+  .begin-pill{margin-top:3px;background:var(--clay);color:#06263a;font-weight:900;font-size:13px;letter-spacing:.5px;padding:7px 18px;border-radius:22px;box-shadow:0 0 18px rgba(58,198,255,.55);border-bottom:3px solid var(--clay-d)}
+  .path-guide{position:absolute;left:calc(50% + 72px);top:26px;width:56px;height:62px}
+  .path-guide.leftside{left:auto;right:calc(50% + 72px)}
+  .locktip{position:absolute;bottom:104px;left:50%;transform:translateX(-50%) translateY(8px);width:210px;background:var(--card);border:2px solid var(--clay);color:var(--brown-l);font-size:12px;font-weight:600;line-height:1.5;padding:10px 12px;border-radius:14px;text-align:center;opacity:0;pointer-events:none;transition:opacity .22s ease, transform .22s ease;box-shadow:0 10px 26px rgba(0,0,0,.45);z-index:8}
+  .locktip b{color:var(--clay)}
+  .locktip::after{content:"";position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);border:8px solid transparent;border-top-color:var(--clay)}
+  .trail-step:hover .locktip,.trail-step.peek .locktip{opacity:1;transform:translateX(-50%) translateY(0)}
+  /* generic screen header */
+  .scr-head{padding:16px 18px 6px}
+  .scr-head h1{font-size:24px;color:var(--brown);font-weight:900}
+  .scr-head p{color:var(--muted);font-size:13px;margin-top:2px}
+  /* garden */
+  .garden-wrap{padding:8px 16px}
+  .inv{display:flex;gap:10px;margin:8px 0 12px}
+  .inv .icell{flex:1;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px 4px;text-align:center}
+  .inv .icell .n{font-size:20px;font-weight:900;color:var(--brown)}
+  .inv .icell .l{font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .garden-scene{border:2px solid var(--line);border-radius:16px;overflow:hidden;background:#bfe3f5}
+  .mood{margin:10px 0 6px;text-align:center;font-weight:900;font-size:15px}
+  .garden-help{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px 14px;font-size:12.5px;color:var(--brown-l);line-height:1.5;margin-top:8px}
+  .garden-tools{display:flex;gap:10px;margin-top:10px}
+  /* cards */
+  .card{background:var(--card);border:2px solid var(--line);border-bottom-width:5px;border-radius:18px;padding:16px;margin:10px 16px}
+  .card h3{color:var(--brown);font-size:17px;margin-bottom:6px}
+  .card p{color:var(--muted);font-size:13px;line-height:1.5}
+  .prof-row{display:flex;justify-content:space-between;padding:9px 2px;border-bottom:1px solid var(--line);font-size:14px}
+  .prof-row:last-child{border-bottom:none}
+  .prof-row b{color:var(--brown)}
+  .langprog{display:flex;align-items:center;gap:10px;margin:8px 16px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px 12px}
+  .langprog .lp-av{width:38px;height:42px;flex-shrink:0}
+  .langprog .lp-bar{flex:1;height:10px;background:var(--cream-d);border-radius:8px;overflow:hidden}
+  .langprog .lp-fill{height:100%;background:var(--sage)}
+  /* language picker */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 18px 30px}
+  .lang-card{background:var(--card);border:2px solid var(--line);border-bottom-width:6px;border-radius:20px;padding:12px 10px 14px;text-align:center;position:relative;overflow:hidden}
+  .lang-card::before{content:"";position:absolute;top:0;left:0;right:0;height:7px;background:repeating-linear-gradient(90deg,var(--gold) 0 8px,var(--clay) 8px 16px,var(--leaf) 16px 24px,var(--indigo) 24px 32px)}
+  .lc-av{width:72px;height:82px;margin:6px auto 2px}
+  .lc-name{font-weight:900;font-size:18px;color:var(--brown)}
+  .lc-native{color:var(--muted);font-size:12px;font-weight:700}
+  .lc-speaker{color:var(--clay);font-size:11px;font-weight:800;margin-top:4px}
+  .lc-model{display:inline-block;margin-top:6px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;padding:3px 7px;border-radius:20px}
+  .m-speak{background:#e6efd8;color:var(--sage-d)}.m-sound{background:#fbeccb;color:#a5761f}.m-script{background:#f6ddd3;color:var(--clay-d)}
+  /* overlays */
+  .overlay{position:absolute;inset:0;background:var(--cream);display:flex;flex-direction:column;z-index:30}
+  .ov-head{display:flex;align-items:center;gap:10px;padding:14px 16px 4px}
+  .ov-head .back{font-size:24px;color:var(--muted);font-weight:800}
+  .ov-head h1{font-size:20px;color:var(--brown);font-weight:900}
+  /* lesson */
+  .topbar{display:flex;align-items:center;gap:14px;padding:14px 18px 6px}
+  .xbtn{font-size:26px;color:var(--muted);font-weight:800;line-height:1}
+  .progress{flex:1;height:16px;background:var(--cream-d);border-radius:20px;overflow:hidden;border:1px solid var(--line)}
+  .progress-fill{height:100%;background:var(--sage);width:0;border-radius:20px;transition:width .3s}
+  .hearts{color:var(--clay);font-weight:800;font-size:17px;letter-spacing:1px}
+  .speaker-strip{display:flex;align-items:center;gap:12px;margin:4px 18px 0;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:8px 12px}
+  .ss-av{width:46px;height:52px;flex-shrink:0}.ss-txt{font-size:12.5px;line-height:1.35}.ss-txt b{color:var(--brown);font-size:13.5px}.ss-txt span{color:var(--muted)}
+  .qwrap{flex:1;display:flex;flex-direction:column;padding:14px 18px 0;overflow-y:auto}
+  .qtype{font-size:12.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+  .qprompt{font-size:26px;font-weight:900;margin:10px 0 4px;line-height:1.25;color:var(--brown)}
+  .qpron{color:var(--clay);font-weight:800;font-size:16px}
+  .speak{margin-left:8px;font-size:21px;vertical-align:middle;cursor:pointer}
+  .choices{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+  .choice{background:var(--card);border:2px solid var(--line);border-bottom-width:4px;border-radius:14px;padding:14px 18px;text-align:left;font-size:19px;font-weight:800;color:var(--brown);transition:all .08s}
+  .choice:hover{background:#1c3247}.choice.sel{border-color:var(--clay);background:rgba(58,198,255,.16)}
+  .choice.good{border-color:var(--good);background:var(--good-l);color:var(--good)}
+  .choice.bad{border-color:var(--bad);background:var(--bad-l);color:var(--bad)}
+  .foot{margin-top:auto;padding:16px 18px;border-top:2px solid var(--line);transition:background .1s}
+  .foot.good{background:var(--good-l);border-top-color:#2c6b4e}.foot.bad{background:var(--bad-l);border-top-color:#7a3339}
+  .fb{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .fb-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#fff;flex-shrink:0}
+  .fb-title{font-weight:900;font-size:18px}.fb-sub{font-size:14px;font-weight:600}
+  .culture{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:26px 24px;gap:8px}
+  .cult-badge{font-size:12px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;color:var(--ochre)}
+  .cult-av{width:104px;height:118px}
+  .cult-native{font-size:22px;font-weight:900;color:var(--clay);line-height:1.3}
+  .cult-en{font-size:16px;font-weight:800;color:var(--brown);font-style:italic}
+  .cult-mean{font-size:13px;color:var(--muted);max-width:420px;line-height:1.6;margin-top:4px}
+  .cult-card{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:20px;position:relative;overflow:hidden;width:100%;max-width:440px}
+  .cult-card::before{content:"";position:absolute;top:0;left:0;right:0;height:8px;background:repeating-linear-gradient(90deg,var(--gold) 0 9px,var(--clay) 9px 18px,var(--leaf) 18px 27px,var(--indigo) 27px 36px)}
+  .end{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:26px}
+  .end h2{font-size:26px;color:var(--clay);font-weight:900}
+  .end-av{width:110px;height:124px;margin:6px}
+  .reward-line{background:var(--gold);color:#3a2a08;font-weight:800;font-size:14px;border-radius:14px;padding:10px 14px;margin:2px 0 6px;max-width:400px}
+  .stats{display:flex;gap:14px;margin:10px 0 18px;width:100%;max-width:380px}
+  .stat{flex:1;border:2px solid var(--ochre);border-radius:16px;overflow:hidden}
+  .stat .st-h{background:var(--ochre);color:var(--brown);font-weight:800;font-size:12px;text-transform:uppercase;padding:5px;letter-spacing:.5px}
+  .stat .st-v{font-size:26px;font-weight:900;padding:10px 0;color:var(--brown)}
+  .end-note{color:var(--muted);font-size:11px;max-width:380px;line-height:1.5;margin-top:10px}
+  .toast{position:absolute;left:50%;bottom:78px;transform:translateX(-50%);background:#0a2233;color:#eaf6ff;border:1px solid #2f6f98;font-weight:700;font-size:13px;padding:9px 16px;border-radius:20px;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none;max-width:88%;text-align:center}
+  .toast.show{opacity:.96}
+  /* Tembo mascot + onboarding */
+  .coach{display:flex;align-items:flex-start;gap:10px;margin:12px 14px 0}
+  .coach-av{width:54px;height:54px;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(58,198,255,.5))}
+  .coach-bubble{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:9px 12px;font-size:12.5px;color:var(--brown-l);position:relative;line-height:1.45}
+  .coach-bubble::before{content:"";position:absolute;left:-8px;top:16px;border:6px solid transparent;border-right-color:var(--card)}
+  .coach-bubble b{color:var(--clay)}
+  #onboard{position:absolute;inset:0;z-index:80;background:radial-gradient(circle at 50% 32%,#123b57 0,#0a1420 72%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px}
+  .ob-ele{width:172px;height:172px;filter:drop-shadow(0 0 26px rgba(58,198,255,.55))}
+  .ob-brand{font-size:32px;font-weight:900;color:var(--clay);text-shadow:0 0 18px rgba(58,198,255,.6);margin-top:2px}
+  .ob-brand span{color:var(--gold)}
+  .ob-title{font-size:22px;font-weight:900;color:#eaf6ff;margin-top:16px;max-width:420px}
+  .ob-text{font-size:14.5px;color:#a9c2d6;margin-top:8px;line-height:1.55;max-width:400px}
+  .ob-dots{display:flex;gap:8px;margin:20px 0}
+  .ob-dots i{width:9px;height:9px;border-radius:50%;background:#2b4a63;display:block}
+  .ob-dots i.on{background:var(--clay);box-shadow:0 0 8px rgba(58,198,255,.7)}
+  .ob-btns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:360px}
+  .ob-skip{color:#7f98ad;font-weight:700;font-size:13px;margin-top:12px;background:none}
+  .ob-ele{width:162px;height:200px}
+  /* transitions */
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes slideUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+  @keyframes slideInR{from{opacity:0;transform:translateX(38px)}to{opacity:1;transform:none}}
+  @keyframes popIn{0%{opacity:0;transform:scale(.7)}60%{transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
+  @keyframes tembHop{0%{opacity:0;transform:translateY(46px) scale(.82)}60%{transform:translateY(-6px) scale(1.05)}100%{opacity:1;transform:translateY(0) scale(1)}}
+  .anim-fade{animation:fadeIn .3s ease both}
+  .anim-slide{animation:slideUp .34s cubic-bezier(.2,.85,.3,1) both}
+  .anim-q{animation:slideInR .28s ease both}
+  .anim-pop{animation:popIn .34s cubic-bezier(.2,.85,.3,1) both}
+  .anim-hop{animation:tembHop .42s cubic-bezier(.2,.85,.3,1) both}
+  /* hint */
+  .hintbar{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .hintbtn{background:var(--card);border:2px solid var(--line);color:var(--gold);font-weight:800;font-size:12.5px;border-radius:20px;padding:6px 13px}
+  .hintbtn:disabled{opacity:.45;cursor:default}
+  .hintleft{font-size:11.5px;color:var(--muted);font-weight:700}
+  .hinttext{width:100%;font-size:13px;color:var(--gold);font-weight:700;margin-top:4px}
+  /* mistake Tembo popup */
+  .mistake-pop{position:absolute;right:12px;bottom:162px;display:flex;flex-direction:column;align-items:center;width:158px;z-index:26;pointer-events:none}
+  .mp-bubble{background:var(--card);border:2px solid var(--bad);border-radius:16px;padding:9px 12px;font-size:12.5px;color:var(--brown);position:relative;box-shadow:0 8px 22px rgba(0,0,0,.4);line-height:1.4;text-align:center}
+  .mp-bubble::after{content:"";position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);border:7px solid transparent;border-top-color:var(--bad)}
+  .mp-bubble b{color:var(--clay)}
+  .mp-ele{width:96px;height:120px;margin-top:2px;filter:drop-shadow(0 0 10px rgba(58,198,255,.5))}
+  /* ===== Chat tab ===== */
+  .seg{display:flex;gap:8px;margin:6px 16px 4px;background:#0e1f2e;border:2px solid var(--line);border-radius:16px;padding:5px}
+  .seg-btn{flex:1;padding:10px;border-radius:12px;font-weight:800;font-size:13px;color:var(--muted);transition:all .18s}
+  .seg-btn.on{background:var(--clay);color:#06263a;box-shadow:0 0 16px rgba(58,198,255,.5)}
+  .demo-note{margin:8px 16px;background:#0e1f2e;border:1px solid #2b4a63;border-radius:12px;padding:9px 12px;font-size:12px;color:var(--brown-l);line-height:1.5}
+  .demo-note b{color:var(--clay)}
+  .msgs{padding:6px 14px 4px;display:flex;flex-direction:column;gap:10px;min-height:120px}
+  .msg{display:flex;align-items:flex-end;gap:8px;max-width:86%}
+  .msg.you{align-self:flex-end;flex-direction:row-reverse}
+  .msg .m-av{width:34px;height:34px;flex-shrink:0}
+  .bubble{padding:9px 13px;border-radius:16px;font-size:14px;line-height:1.45;font-weight:600}
+  .msg.bot .bubble{background:var(--card);border:2px solid var(--line);color:var(--ink);border-bottom-left-radius:5px}
+  .msg.you .bubble{background:var(--clay);color:#06263a;border-bottom-right-radius:5px}
+  .bubble .gloss{display:block;font-size:11.5px;color:var(--muted);font-weight:700;margin-top:3px}
+  .composer{display:flex;gap:8px;align-items:center;margin:8px 14px 18px}
+  .composer input{flex:1;background:#0e1f2e;border:2px solid var(--line);border-radius:22px;padding:11px 16px;color:var(--ink);font-size:14px;font-family:inherit}
+  .composer input:focus{outline:none;border-color:var(--clay)}
+  .sendbtn{width:44px;height:44px;border-radius:50%;background:var(--clay);color:#06263a;font-size:18px;font-weight:900;flex-shrink:0;border-bottom:3px solid var(--clay-d)}
+  .micbtn{width:52px;height:52px;border-radius:50%;background:var(--clay);color:#06263a;font-size:24px;flex-shrink:0;border-bottom:4px solid var(--clay-d);box-shadow:0 0 18px rgba(58,198,255,.5)}
+  .micbtn.live{animation:micPulse 1s infinite}
+  @keyframes micPulse{0%,100%{box-shadow:0 0 14px rgba(58,198,255,.5)}50%{box-shadow:0 0 30px rgba(58,198,255,.95)}}
+  /* ChatGPT-style voice orb */
+  .voice-stage{display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px 18px 24px;text-align:center}
+  .voice-orb{width:190px;height:190px;position:relative;display:flex;align-items:center;justify-content:center;margin:6px 0}
+  .orb-dots{display:flex;align-items:center;gap:12px;z-index:2}
+  .orb-dots span{width:32px;height:44px;border-radius:50%;background:#fff;display:block;box-shadow:0 0 14px rgba(255,255,255,.5)}
+  .voice-orb.idle .orb-dots span{animation:dotBreath 2.6s ease-in-out infinite}
+  .voice-orb.listening .orb-dots span{animation:dotBounce .85s ease-in-out infinite}
+  .orb-dots span:nth-child(2){animation-delay:.12s}.orb-dots span:nth-child(3){animation-delay:.24s}.orb-dots span:nth-child(4){animation-delay:.36s}
+  .voice-orb.speaking .orb-dots{opacity:0;transition:opacity .3s}
+  .orb-aura,.orb-core{position:absolute;border-radius:50%;opacity:0;transition:opacity .4s}
+  .orb-aura{inset:-8px;background:conic-gradient(from 0deg,#3ac6ff,#7c5ad0,#28e0c0,#5b8bff,#3ac6ff);filter:blur(20px)}
+  .orb-core{inset:30px;background:radial-gradient(circle at 38% 34%,#cdeeff,#6a7bf0 52%,#28c8b4);filter:blur(3px)}
+  .voice-orb.speaking{animation:orbLive 3.2s ease-in-out infinite}
+  .voice-orb.speaking .orb-aura{opacity:.95;animation:auraSpin 7s linear infinite}
+  .voice-orb.speaking .orb-core{opacity:1}
+  @keyframes dotBounce{0%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(-16px) scaleY(1.08)}}
+  @keyframes dotBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+  @keyframes auraSpin{to{transform:rotate(360deg)}}
+  @keyframes orbLive{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-12px) scale(1.08)}}
+  .voice-status{font-size:14px;font-weight:800;color:var(--brown-l)}
+  .voice-caption{min-height:46px;max-width:420px}
+  .cap-you{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:4px}
+  .cap-bot{font-size:21px;font-weight:900;color:#eaf6ff}
+  .cap-bot .gloss{display:block;font-size:12.5px;color:var(--muted);font-weight:700;margin-top:2px}
+  .mic-big{width:78px;height:78px;border-radius:50%;background:var(--clay);color:#06263a;font-size:32px;border-bottom:5px solid var(--clay-d);box-shadow:0 0 22px rgba(58,198,255,.55)}
+  .mic-big:active{transform:translateY(3px)}
+  .voice-type-toggle{color:var(--muted);font-weight:700;font-size:13px;background:none}
+  .voice-typebar{width:100%;max-width:420px;margin-top:2px}
+  /* ===== DEMO: language dropdown + native chat ===== */
+  .chat-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .lang-drop{position:relative;flex-shrink:0}
+  .lang-drop select{appearance:none;-webkit-appearance:none;background:#0e1f2e;color:var(--ink);border:2px solid var(--clay);border-radius:999px;padding:8px 32px 8px 14px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 0 14px rgba(58,198,255,.35)}
+  .lang-drop select:focus{outline:none}
+  .lang-drop::after{content:"▾";position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--clay);pointer-events:none;font-size:13px}
+  .dchat{display:flex;flex-direction:column;height:calc(100vh - 230px);min-height:340px}
+  .dchat .msgs{flex:1;overflow-y:auto}
+  .bubble .rom{display:block;font-size:12px;color:var(--gold);font-weight:700;margin-top:3px}
+  .bubble .say{display:inline-block;margin-top:4px;background:none;color:var(--clay);font-weight:800;font-size:12px;padding:0}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:6px 14px 2px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .pchip{white-space:nowrap;background:#0e1f2e;border:2px solid var(--line);color:var(--ink);border-radius:999px;padding:7px 12px;font-weight:700;font-size:13px}
+  .pchip:active{border-color:var(--clay)}
+  .mini-mic{width:44px;height:44px;border-radius:50%;background:#0e1f2e;border:2px solid var(--line);font-size:18px;flex-shrink:0}
+  .mini-mic.live{background:var(--bad);border-color:var(--bad);animation:micPulse 1s infinite}
+  .typing span{display:inline-block;width:7px;height:7px;background:var(--muted);border-radius:50%;margin:0 2px;animation:tdot 1s infinite}
+  .typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+  @keyframes tdot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+  .say-card{width:100%;max-width:420px;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+  .say-card .sc-nav{width:34px;height:34px;border-radius:50%;background:#0e1f2e;color:var(--ink);font-size:16px;font-weight:900;flex-shrink:0}
+  .say-card .sc-mid{flex:1;text-align:center}
+  .say-card .sc-lbl{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:1px;text-transform:uppercase}
+  .say-card .sc-t{font-size:20px;font-weight:900;color:#eaf6ff;margin-top:2px}
+  .say-card .sc-r{font-size:12px;color:var(--gold);font-weight:700}
+  .say-card .sc-e{font-size:12.5px;color:var(--muted);font-weight:700}
+  .say-card .sc-hear{background:none;color:var(--clay);font-weight:800;font-size:12px;margin-top:4px}
+  .score{font-weight:900;font-size:15px;min-height:20px}
+  .score.ok{color:var(--good)}.score.mid{color:var(--gold)}.score.no{color:var(--bad)}
+  /* ===== Leaderboard (game style) ===== */
+  #leaderboard{background:radial-gradient(circle at 50% 12%,#123f5e 0,#0a1420 60%);overflow-y:auto}
+  .lb-title{text-align:center;font-size:24px;font-weight:900;color:#fff;margin:6px 0 2px;text-shadow:0 0 16px rgba(58,198,255,.7)}
+  .lb-sub{text-align:center;color:var(--muted);font-size:12.5px;margin-bottom:8px}
+  .podium{display:flex;justify-content:center;align-items:flex-end;gap:10px;padding:14px 16px 4px}
+  .pod{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;max-width:110px}
+  .pod .medal{font-size:26px;filter:drop-shadow(0 0 8px rgba(255,217,74,.7))}
+  .pod .pav{width:52px;height:52px;border-radius:50%;background:#16273a;border:3px solid var(--clay);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#fff}
+  .pod .pname{font-size:12px;font-weight:800;color:#eaf6ff}
+  .pod .psc{font-size:12px;font-weight:900;color:var(--gold)}
+  .pod .bar{width:100%;border-radius:12px 12px 0 0;background:linear-gradient(180deg,#3ac6ff,#1f6f9c);box-shadow:0 0 18px rgba(58,198,255,.5)}
+  .pod.p1 .bar{height:78px}.pod.p2 .bar{height:56px}.pod.p3 .bar{height:40px}
+  .pod.p1 .pav{border-color:var(--gold);box-shadow:0 0 18px rgba(255,217,74,.6)}
+  .lb-rows{padding:10px 16px 40px;display:flex;flex-direction:column;gap:8px}
+  .lb-row{display:flex;align-items:center;gap:12px;background:#132436;border:2px solid var(--line);border-radius:14px;padding:9px 14px;animation:slideUp .4s both}
+  .lb-row.you{border-color:var(--clay);background:#123a52;box-shadow:0 0 18px rgba(58,198,255,.4)}
+  .lb-rank{font-weight:900;color:var(--muted);width:26px;text-align:center}
+  .lb-row.you .lb-rank{color:var(--clay)}
+  .lb-name{flex:1;font-weight:800;color:#eaf6ff;font-size:14px}
+  .lb-score{font-weight:900;color:var(--gold)}
+  .lb-gard{font-size:18px}
+  .tile.current{animation:tilePulse 2.2s ease-in-out infinite}
+  @keyframes tilePulse{0%,100%{box-shadow:0 0 18px rgba(58,198,255,.45)}50%{box-shadow:0 0 30px rgba(58,198,255,.8)}}
+  /* Tembo teaching picture */
+  .scene-card{margin:8px 4px 2px;background:linear-gradient(180deg,#183149,#122536);border:2px solid #294761;border-radius:20px;padding:10px 14px}
+  .scene-in{display:flex;align-items:center;justify-content:center;gap:18px}
+  .scene-ele{width:60px;height:60px;filter:drop-shadow(0 0 8px rgba(58,198,255,.4))}
+  .scene-prop{width:84px;height:84px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.3))}
+  /* exercise formats */
+  .typewrap{margin-top:18px}
+  .typewrap input{width:100%;background:#0e1f2e;border:2px solid var(--line);border-radius:14px;padding:14px 16px;color:var(--ink);font-size:18px;font-family:inherit}
+  .typewrap input:focus{outline:none;border-color:var(--clay)}
+  .buildwrap{margin-top:16px}
+  .build-answer{min-height:56px;border-bottom:2px dashed var(--line);padding:10px 4px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start}
+  .build-bank{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .tok{background:var(--card);border:2px solid var(--line);border-bottom-width:4px;border-radius:12px;padding:9px 14px;font-size:17px;font-weight:800;color:var(--brown)}
+  .tok:active{transform:translateY(2px)}
+  .tok.used{opacity:.22;pointer-events:none}
+  .matchwrap{display:flex;gap:12px;margin-top:16px}
+  .match-col{flex:1;display:flex;flex-direction:column;gap:8px}
+  .match-item{background:var(--card);border:2px solid var(--line);border-bottom-width:4px;border-radius:12px;padding:12px 8px;font-size:15px;font-weight:800;color:var(--brown);text-align:center}
+  .match-item.sel{border-color:var(--clay);background:#123a52}
+  .match-item.done{border-color:var(--good);background:var(--good-l);color:var(--good);opacity:.65;pointer-events:none}
+  .match-item.miss{border-color:var(--bad);animation:shake .3s}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .speakwrap{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:20px}
+  .speak-mic{width:84px;height:84px;border-radius:50%;background:var(--clay);color:#06263a;font-size:34px;border-bottom:5px solid var(--clay-d);box-shadow:0 0 22px rgba(58,198,255,.5)}
+  .speak-mic.live{animation:micPulse 1s infinite}
+  .speak-heard{font-size:15px;color:var(--brown-l);font-weight:700;min-height:20px;text-align:center}
+  .speak-skip{color:var(--muted);font-weight:700;font-size:13px;background:none}
+  /* recorder */
+  .rec-help{margin:6px 16px;background:#0e1f2e;border:1px solid #2b4a63;border-radius:12px;padding:9px 12px;font-size:12px;color:var(--brown-l);line-height:1.5}
+  .rec-help b{color:var(--clay)}
+  #recLang{width:100%;background:#0e1f2e;border:2px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--ink);font-family:inherit;font-size:14px;font-weight:700}
+  .rec-row{display:flex;align-items:center;gap:10px;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:8px}
+  .rec-w{flex:1;min-width:0}
+  .rec-w b{color:var(--ink);font-size:15px}
+  .rec-w span{display:block;color:var(--muted);font-size:11.5px;font-weight:600}
+  .rec-btn,.rec-play,.rec-dl{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;text-decoration:none}
+  .rec-btn{background:var(--bad);color:#fff;border-bottom:3px solid #7a3339}
+  .rec-btn.live{animation:micPulse 1s infinite;background:#ff2d2d}
+  .rec-btn.saved{background:var(--sage);border-bottom-color:var(--sage-d)}
+  .rec-play{background:var(--card);border:2px solid var(--clay);color:var(--clay)}
+  .rec-dl{background:var(--clay);color:#06263a}
+  @media(max-width:420px){.qprompt{font-size:22px}.grid{gap:10px}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="kente"></div>
+
+  <div id="tabs">
+    <section id="learn" class="tab"></section>
+    <section id="garden" class="tab hidden"></section>
+    <section id="chat" class="tab hidden"></section>
+    <section id="practice" class="tab hidden"></section>
+    <section id="profile" class="tab hidden"></section>
+  </div>
+
+  <nav id="bottomnav">
+    <button class="navbtn active" data-tab="learn" onclick="showTab('learn')"><span class="ic">🏡</span>Learn</button>
+    <button class="navbtn" data-tab="garden" onclick="showTab('garden')"><span class="ic">🌻</span>Garden</button>
+    <button class="navbtn" data-tab="chat" onclick="showTab('chat')"><span class="ic">💬</span>Chat</button>
+    <button class="navbtn" data-tab="practice" onclick="showTab('practice')"><span class="ic">💪</span>Practice</button>
+    <button class="navbtn" data-tab="profile" onclick="showTab('profile')"><span class="ic">👤</span>Profile</button>
+  </nav>
+
+  <!-- overlays -->
+  <section id="langpicker" class="overlay hidden">
+    <div class="ov-head"><button class="back" id="lpBack" onclick="showTab('learn')">&larr;</button><h1>Choose a language</h1></div>
+    <div style="overflow-y:auto"><div class="grid" id="langGrid"></div></div>
+  </section>
+
+  <section id="session" class="overlay hidden">
+    <div class="topbar"><button class="xbtn" onclick="quit()">&times;</button>
+      <div class="progress"><div class="progress-fill" id="pfill"></div></div>
+      <div class="hearts" id="hearts"></div></div>
+    <div class="speaker-strip" id="speakerStrip"></div>
+    <div class="qwrap" id="quizView">
+      <div class="scene-card hidden" id="sceneCard"></div>
+      <div class="qtype" id="qtype"></div>
+      <div class="qprompt" id="qprompt"></div>
+      <div class="qpron" id="qpron"></div>
+      <div class="hintbar"><button class="hintbtn" id="hintBtn" onclick="useHint()">❓ Hint</button><span class="hintleft" id="hintLeft"></span><div class="hinttext" id="hintText"></div></div>
+      <div class="choices" id="choices"></div>
+      <div class="typewrap hidden" id="typeWrap"><input id="typeInput" autocomplete="off" autocapitalize="off" placeholder="Type your answer…" onkeydown="if(event.key==='Enter')checkType()"></div>
+      <div class="buildwrap hidden" id="buildWrap"><div class="build-answer" id="buildAnswer"></div><div class="build-bank" id="buildBank"></div></div>
+      <div class="matchwrap hidden" id="matchWrap"></div>
+      <div class="speakwrap hidden" id="speakWrap"><button class="speak-mic" id="speakBtn" onclick="speakMic()">🎙️</button><div class="speak-heard" id="speakHeard"></div></div>
+      <div class="foot" id="foot">
+        <div class="fb hidden" id="fb"><div class="fb-icon" id="fbIcon"></div>
+          <div><div class="fb-title" id="fbTitle"></div><div class="fb-sub" id="fbSub"></div></div></div>
+        <button class="btn btn-grey btn-wide" id="checkBtn" disabled onclick="check()">Check</button>
+      </div>
+    </div>
+    <div id="mistakePop" class="mistake-pop hidden"><div class="mp-bubble" id="mpBubble"></div><div class="mp-ele" id="mpEle"></div></div>
+    <div class="culture hidden" id="cultureView">
+      <div class="cult-badge">✦ A proverb from your guide ✦</div>
+      <div class="cult-av" id="cultAv"></div>
+      <div class="cult-card"><div class="cult-native" id="cultNative"></div>
+        <div class="cult-en" id="cultEn"></div><div class="cult-mean" id="cultMean"></div></div>
+      <button class="btn btn-sage btn-wide" style="max-width:440px;margin-top:14px" onclick="afterCulture()">Continue</button>
+    </div>
+  </section>
+
+  <section id="end" class="overlay hidden">
+    <div class="end"><h2 id="endTitle">Unit complete!</h2>
+      <div class="end-av" id="endAv"></div>
+      <div class="reward-line" id="endReward"></div>
+      <div class="stats">
+        <div class="stat"><div class="st-h">XP</div><div class="st-v" id="endXp">0</div></div>
+        <div class="stat" style="border-color:var(--sage)"><div class="st-h" style="background:var(--sage);color:#fff">Accuracy</div><div class="st-v" id="endAcc">0%</div></div></div>
+      <div id="endBtns" style="width:100%;max-width:380px;display:flex;flex-direction:column;gap:10px"></div>
+      <div class="end-note">Voices are placeholders until real recordings are added — see the recording checklist to bring in authentic native speakers (like Amharic with your mom).</div>
+    </div>
+  </section>
+
+  <section id="leaderboard" class="overlay hidden">
+    <div class="ov-head"><button class="back" onclick="showTab('garden')">&larr;</button><h1>🏆 Garden League</h1></div>
+    <div style="flex:1;overflow-y:auto"><div id="lbInner"></div></div>
+  </section>
+
+  <section id="recorder" class="overlay hidden">
+    <div class="ov-head"><button class="back" onclick="showTab('profile')">&larr;</button><h1>🎙️ Record voices</h1></div>
+    <div class="rec-help">Pick a language, tap ● to record each word, ▶ to hear it, ⤓ to download. Then drop the files into <b>audio/&lt;language&gt;/</b>. Needs Chrome + mic permission (serve via http://localhost).</div>
+    <div style="padding:2px 16px 8px"><select id="recLang" onchange="renderRecList()"></select></div>
+    <div id="recList" style="flex:1;overflow-y:auto;padding:0 16px 40px"></div>
+  </section>
+
+  <section id="onboard" class="hidden">
+    <div class="ob-ele" id="obEle"></div>
+    <div class="ob-brand" id="obBrand"></div>
+    <div class="ob-title" id="obTitle"></div>
+    <div class="ob-text" id="obText"></div>
+    <div class="ob-dots" id="obDots"></div>
+    <div class="ob-btns" id="obBtns"></div>
+    <button class="ob-skip" id="obSkip" onclick="finishOnboard()">Skip intro</button>
+  </section>
+
+  <div id="toast" class="toast"></div>
+  <div class="kente"></div>
+</div>
+
+<script>
+/* ===== Afrology — offline, no API key. Tabs + Learn path + Garden + Units ===== */
+const U=(title,icon,vocab,special)=>({title,icon,vocab:vocab||[],special:special||[]});
+const FLAGS={swahili:"🇹🇿",hausa:"🇳🇬",yoruba:"🇳🇬",igbo:"🇳🇬",oromo:"🇪🇹",amharic:"🇪🇹",shona:"🇿🇼",zulu:"🇿🇦",fula:"🇸🇳",somali:"🇸🇴",tigrinya:"🇪🇷",tamazight:"🇲🇦"};
+
+const LANGS = {
+ swahili:{name:"Swahili",native:"Kiswahili",model:"speak",ttsLang:"sw",speaker:"Zawadi",region:"Tanzania · Kenya",
+   tip:"No tones, Latin script — the gentlest start. Dive right in.",
+   av:{skin:"#8f5a33",head:"cap",hc:"#f4f1ea",hc2:"#caa02c",g:"#0e8a7d",g2:"#d1462f",wave:true},
+   proverb:{native:"Haba na haba hujaza kibaba.",en:"Little by little fills the measure.",mean:"Small, steady effort adds up — the perfect mindset for learning a language."},
+   sent:[{e:"I like food",t:"Ninapenda chakula",p:"ni-na-PEN-da cha-KU-la"},{e:"The water is good",t:"Maji ni mazuri",p:"MA-ji ni ma-ZU-ri"},{e:"I have a friend",t:"Nina rafiki",p:"NEE-na ra-FI-ki"},{e:"My name is Zawadi",t:"Jina langu ni Zawadi",p:"JI-na LAN-gu ni za-WA-di"}],
+   units:[
+    U("Greetings","👋",[{e:"Hello",t:"Jambo",p:"JAM-bo"},{e:"Good morning",t:"Habari za asubuhi",p:"ha-BA-ri za a-su-BU-hi"},{e:"How are you?",t:"Habari yako?",p:"ha-BA-ri YA-ko"},{e:"I am fine",t:"Nzuri",p:"n-ZU-ri"},{e:"Thank you",t:"Asante",p:"a-SAN-te"},{e:"Please",t:"Tafadhali",p:"ta-fa-DHA-li"},{e:"Sorry / excuse me",t:"Samahani",p:"sa-ma-HA-ni"},{e:"Welcome",t:"Karibu",p:"ka-REE-bu"},{e:"Yes",t:"Ndiyo",p:"n-DEE-yo"},{e:"No",t:"Hapana",p:"ha-PA-na"},{e:"Goodbye",t:"Kwaheri",p:"kwa-HE-ri"}]),
+    U("Family & people","👪",[{e:"Mother",t:"Mama",p:"MA-ma"},{e:"Father",t:"Baba",p:"BA-ba"},{e:"Child",t:"Mtoto",p:"m-TO-to"},{e:"Friend",t:"Rafiki",p:"ra-FI-ki"},{e:"Brother",t:"Kaka",p:"KA-ka"},{e:"Sister",t:"Dada",p:"DA-da"},{e:"Man",t:"Mwanamume",p:"mwa-na-MU-me"},{e:"Woman",t:"Mwanamke",p:"mwa-NAM-ke"},{e:"Grandmother",t:"Bibi",p:"BEE-bi"},{e:"Grandfather",t:"Babu",p:"BA-bu"},{e:"Name",t:"Jina",p:"JEE-na"}]),
+    U("Numbers","🔢",[{e:"One",t:"Moja",p:"MO-ja"},{e:"Two",t:"Mbili",p:"m-BEE-li"},{e:"Three",t:"Tatu",p:"TA-tu"},{e:"Four",t:"Nne",p:"n-NE"},{e:"Five",t:"Tano",p:"TA-no"},{e:"Six",t:"Sita",p:"SEE-ta"},{e:"Seven",t:"Saba",p:"SA-ba"},{e:"Eight",t:"Nane",p:"NA-ne"},{e:"Nine",t:"Tisa",p:"TEE-sa"},{e:"Ten",t:"Kumi",p:"KU-mi"}]),
+    U("Food & market","🍲",[{e:"Water",t:"Maji",p:"MA-ji"},{e:"Food",t:"Chakula",p:"cha-KU-la"},{e:"Bread",t:"Mkate",p:"m-KA-te"},{e:"Meat",t:"Nyama",p:"NYA-ma"},{e:"Milk",t:"Maziwa",p:"ma-ZEE-wa"},{e:"Tea",t:"Chai",p:"CHA-i"},{e:"Rice",t:"Wali",p:"WA-li"},{e:"Fruit",t:"Matunda",p:"ma-TUN-da"},{e:"Money",t:"Pesa",p:"PE-sa"},{e:"Market",t:"Soko",p:"SO-ko"}]),
+    U("Getting around","🧭",[{e:"House",t:"Nyumba",p:"NYUM-ba"},{e:"Road",t:"Barabara",p:"ba-ra-BA-ra"},{e:"Car",t:"Gari",p:"GA-ri"},{e:"School",t:"Shule",p:"SHU-le"},{e:"Hospital",t:"Hospitali",p:"hos-pi-TA-li"},{e:"Shop",t:"Duka",p:"DU-ka"},{e:"Where?",t:"Wapi?",p:"WA-pi"},{e:"Toilet",t:"Choo",p:"CHO-o"}]),
+    U("Actions","⚡",[{e:"To go",t:"Kwenda",p:"KWEN-da"},{e:"To come",t:"Kuja",p:"KU-ja"},{e:"To eat",t:"Kula",p:"KU-la"},{e:"To drink",t:"Kunywa",p:"KU-nywa"},{e:"To want",t:"Kutaka",p:"ku-TA-ka"},{e:"To love",t:"Kupenda",p:"ku-PEN-da"},{e:"To see",t:"Kuona",p:"ku-O-na"},{e:"To know",t:"Kujua",p:"ku-JU-a"},{e:"To sleep",t:"Kulala",p:"ku-LA-la"},{e:"To read",t:"Kusoma",p:"ku-SO-ma"}]),
+    U("Describing","🎨",[{e:"Good",t:"Vizuri",p:"vi-ZU-ri"},{e:"Big",t:"Kubwa",p:"KUB-wa"},{e:"Small",t:"Ndogo",p:"n-DO-go"},{e:"Hot",t:"Moto",p:"MO-to"},{e:"Cold",t:"Baridi",p:"ba-REE-di"},{e:"Beautiful",t:"Mzuri",p:"m-ZU-ri"},{e:"New",t:"Mpya",p:"m-PYA"},{e:"Many",t:"Nyingi",p:"NYIN-gi"}])
+   ]},
+ hausa:{name:"Hausa",native:"Harshen Hausa",model:"speak",ttsLang:"ha",speaker:"Amina",region:"Nigeria · Niger",
+   tip:"Boko/Latin script. Watch the hooked letters ɓ ɗ ƙ and unwritten tone.",
+   av:{skin:"#87552f",head:"cap",hc:"#2f6f4f",hc2:"#e6b34a",g:"#e8ddc7",g2:"#b8894a",wave:true},
+   proverb:{native:"Haƙuri maganin duniya.",en:"Patience is the medicine of the world.",mean:"Patience solves what haste cannot — a good companion for a new learner."},
+   units:[
+    U("Greetings","👋",[{e:"Hello / greetings",t:"Sannu",p:"SAN-nu"},{e:"Good morning",t:"Ina kwana?",p:"EE-na KWA-na"},{e:"How are you? (m)",t:"Yaya kake?",p:"YA-ya KA-ke"},{e:"I am fine",t:"Lafiya lau",p:"la-FEE-ya lau"},{e:"Thank you",t:"Na gode",p:"na GO-de"},{e:"Please",t:"Don Allah",p:"don AL-lah"},{e:"Welcome",t:"Barka da zuwa",p:"BAR-ka da ZU-wa"},{e:"Yes",t:"Ii",p:"ee"},{e:"No",t:"A'a",p:"A-a"},{e:"See you later",t:"Sai anjima",p:"sigh an-JEE-ma"}]),
+    U("Family & people","👪",[{e:"Mother",t:"Uwa",p:"OO-wa"},{e:"Father",t:"Uba",p:"OO-ba"},{e:"Boy",t:"Yaro",p:"YA-ro"},{e:"Girl",t:"Yarinya",p:"ya-RIN-ya"},{e:"Friend",t:"Aboki",p:"a-BO-ki"},{e:"Man",t:"Namiji",p:"na-MEE-ji"},{e:"Woman",t:"Mace",p:"MA-che"},{e:"Name",t:"Suna",p:"SU-na"}]),
+    U("Numbers","🔢",[{e:"One",t:"Daya",p:"DA-ya"},{e:"Two",t:"Biyu",p:"BEE-yu"},{e:"Three",t:"Uku",p:"OO-ku"},{e:"Four",t:"Huɗu",p:"HOO-du"},{e:"Five",t:"Biyar",p:"BEE-yar"},{e:"Six",t:"Shida",p:"SHEE-da"},{e:"Seven",t:"Bakwai",p:"BAK-wai"},{e:"Eight",t:"Takwas",p:"TAK-was"},{e:"Nine",t:"Tara",p:"TA-ra"},{e:"Ten",t:"Goma",p:"GO-ma"}]),
+    U("Food & market","🍲",[{e:"Water",t:"Ruwa",p:"RU-wa"},{e:"Food",t:"Abinci",p:"a-BIN-chi"},{e:"Bread",t:"Burodi",p:"bu-RO-di"},{e:"Meat",t:"Nama",p:"NA-ma"},{e:"Milk",t:"Madara",p:"ma-DA-ra"},{e:"Tea",t:"Shayi",p:"SHA-yi"},{e:"Rice",t:"Shinkafa",p:"shin-KA-fa"},{e:"Money",t:"Kuɗi",p:"KU-di"},{e:"Market",t:"Kasuwa",p:"ka-SU-wa"}]),
+    U("Getting around","🧭",[{e:"House",t:"Gida",p:"GEE-da"},{e:"Road",t:"Hanya",p:"HAN-ya"},{e:"Car",t:"Mota",p:"MO-ta"},{e:"School",t:"Makaranta",p:"ma-ka-RAN-ta"},{e:"Hospital",t:"Asibiti",p:"a-si-BEE-ti"},{e:"Shop",t:"Shago",p:"SHA-go"},{e:"Where?",t:"Ina?",p:"EE-na"}]),
+    U("Actions","⚡",[{e:"To go",t:"Tafi",p:"TA-fi"},{e:"To eat",t:"Ci",p:"chee"},{e:"To drink",t:"Sha",p:"sha"},{e:"To want / love",t:"So",p:"so"},{e:"To see",t:"Gani",p:"GA-ni"},{e:"To know",t:"Sani",p:"SA-ni"},{e:"To sleep",t:"Kwana",p:"KWA-na"},{e:"To read",t:"Karanta",p:"ka-RAN-ta"}]),
+    U("Describing","🎨",[{e:"Good",t:"Kyau",p:"kyow"},{e:"Big",t:"Babba",p:"BAB-ba"},{e:"Small",t:"Karami",p:"ka-RA-mi"},{e:"Hot",t:"Zafi",p:"ZA-fi"},{e:"Cold",t:"Sanyi",p:"SAN-yi"},{e:"New",t:"Sabo",p:"SA-bo"},{e:"Many",t:"Da yawa",p:"da YA-wa"}]),
+    U("Script & sounds","🔤",[],[{q:"Which letter is the implosive 'hooked b'?",a:"ɓ",c:["ɓ","b","p","d"],n:"ɓ is a glottalised sound with no English equivalent."},{q:"Hausa tone and vowel length are…",a:"Not written",c:["Not written","Marked with accents","Shown by dots","Always doubled"],n:"They must be learned by ear."}])
+   ]},
+ yoruba:{name:"Yoruba",native:"Èdè Yorùbá",model:"sound",ttsLang:"yo",speaker:"Adéọlá",region:"Nigeria · Benin",
+   tip:"Three written tones (á = high, a = mid, à = low). Train your ear first.",
+   av:{skin:"#96603a",head:"fila",hc:"#b0343f",hc2:"#efc35a",g:"#d9a441",g2:"#7a2e2e",wave:true},
+   proverb:{native:"Iṣẹ́ ni oògùn ìṣẹ́.",en:"Work is the antidote to poverty.",mean:"Consistent effort is the cure — show up for a little practice each day."},
+   units:[
+    U("Greetings","👋",[{e:"Hello",t:"Báwo",p:"BAH-wo"},{e:"Good morning",t:"Ẹ káàárọ̀",p:"eh KAH-ah-RAW"},{e:"Good afternoon",t:"Ẹ káàsán",p:"eh KAH-ah-SAN"},{e:"How are you?",t:"Báwo ni?",p:"BAH-wo nee"},{e:"I am fine",t:"Mo wà dáadáa",p:"mo wah DAH-DAH"},{e:"Thank you",t:"Ẹ ṣé",p:"eh SHEH"},{e:"Please",t:"Jọ̀wọ́",p:"JAW-waw"},{e:"Yes",t:"Bẹ́ẹ̀ni",p:"BEH-eh-nee"},{e:"No",t:"Bẹ́ẹ̀kọ́",p:"BEH-eh-KAW"},{e:"Goodbye",t:"Ó dàbọ̀",p:"oh DAH-baw"}]),
+    U("Family & people","👪",[{e:"Mother",t:"Ìyá",p:"ee-YAH"},{e:"Father",t:"Bàbá",p:"bah-BAH"},{e:"Child",t:"Ọmọ",p:"AW-maw"},{e:"Friend",t:"Ọ̀rẹ́",p:"AW-REH"},{e:"Elder sibling",t:"Ẹ̀gbọ́n",p:"EH-gbawn"},{e:"Younger sibling",t:"Àbúrò",p:"ah-BOO-raw"},{e:"Man",t:"Ọkùnrin",p:"aw-KUN-rin"},{e:"Woman",t:"Obìnrin",p:"o-BIN-rin"},{e:"Name",t:"Orúkọ",p:"o-ROO-kaw"}]),
+    U("Numbers","🔢",[{e:"One",t:"Ọ̀kan",p:"AW-kan"},{e:"Two",t:"Èjì",p:"EH-jee"},{e:"Three",t:"Ẹ̀ta",p:"EH-ta"},{e:"Four",t:"Ẹ̀rin",p:"EH-rin"},{e:"Five",t:"Àrún",p:"ah-ROON"},{e:"Six",t:"Ẹ̀fà",p:"EH-fah"},{e:"Seven",t:"Èje",p:"EH-je"},{e:"Eight",t:"Ẹ̀jọ",p:"EH-jaw"},{e:"Nine",t:"Ẹ̀sán",p:"EH-san"},{e:"Ten",t:"Ẹ̀wá",p:"EH-wah"}]),
+    U("Food & market","🍲",[{e:"Water",t:"Omi",p:"O-mee"},{e:"Food",t:"Oúnjẹ",p:"OH-oon-jeh"},{e:"Meat",t:"Ẹran",p:"EH-ran"},{e:"Milk",t:"Wàrà",p:"WAH-rah"},{e:"Tea",t:"Tíì",p:"tee"},{e:"Bread",t:"Búrẹ́dì",p:"BOO-reh-dee"},{e:"Rice",t:"Ìrẹsì",p:"ee-REH-see"},{e:"Fruit",t:"Èso",p:"EH-so"},{e:"Money",t:"Owó",p:"o-WO"},{e:"Market",t:"Ọjà",p:"AW-jah"}]),
+    U("Getting around","🧭",[{e:"House",t:"Ilé",p:"ee-LEH"},{e:"Road",t:"Ọ̀nà",p:"AW-nah"},{e:"Vehicle",t:"Ọkọ̀",p:"aw-KAW"},{e:"School",t:"Ilé-ìwé",p:"ee-LEH-ee-WEH"},{e:"Hospital",t:"Ilé-ìwòsàn",p:"ee-LEH-ee-waw-SAN"},{e:"Where?",t:"Níbo?",p:"NEE-bo"}]),
+    U("Actions","⚡",[{e:"To go",t:"Lọ",p:"law"},{e:"To come",t:"Wá",p:"wah"},{e:"To eat",t:"Jẹ",p:"jeh"},{e:"To drink",t:"Mu",p:"moo"},{e:"To want / love",t:"Fẹ́",p:"feh"},{e:"To see",t:"Rí",p:"ree"},{e:"To know",t:"Mọ̀",p:"maw"},{e:"To sleep",t:"Sùn",p:"soon"},{e:"To read",t:"Kà",p:"kah"}]),
+    U("Describing","🎨",[{e:"Good",t:"Dáradára",p:"DAH-rah-DAH-rah"},{e:"Big",t:"Ńlá",p:"n-LAH"},{e:"Small",t:"Kékeré",p:"KEH-keh-reh"},{e:"Hot",t:"Gbóná",p:"GBAW-nah"},{e:"Cold",t:"Tútù",p:"TOO-too"},{e:"New",t:"Tuntun",p:"TUN-tun"},{e:"Many",t:"Púpọ̀",p:"POO-paw"}]),
+    U("Tones & script","🔤",[],[{q:"Which accent marks a HIGH tone?",a:"á",c:["á","à","a","ā"],n:"Acute = high, grave = low, unmarked = mid."},{q:"Which accent marks a LOW tone?",a:"à",c:["à","á","a","â"],n:"Grave accent = low tone."},{q:"The dot under ẹ / ọ changes the…",a:"Vowel sound",c:["Vowel sound","Tone","Stress","Length"],n:"ẹ ≈ 'eh' in bed, ọ ≈ 'aw' in raw."}])
+   ]},
+ igbo:{name:"Igbo",native:"Asụsụ Igbo",model:"sound",ttsLang:"ig",speaker:"Ngọzị",region:"Nigeria",
+   tip:"Tonal + vowel harmony. Taught in Standard Igbo (Igbo izugbe).",
+   av:{skin:"#8c5730",head:"redcap",hc:"#c0392b",hc2:"#efc35a",g:"#1c1c1c",g2:"#efc35a",wave:true},
+   proverb:{native:"Egbe bere, ugo bere.",en:"Let the kite perch, and let the eagle perch.",mean:"Live and let live — respect for others is at the heart of Igbo wisdom."},
+   units:[
+    U("Greetings","👋",[{e:"Hello",t:"Ndewo",p:"n-DEH-wo"},{e:"Good morning",t:"Ụtụtụ ọma",p:"oo-TOO-too AW-ma"},{e:"How are you?",t:"Kedu ka ị mere?",p:"KEH-du ka ee MEH-reh"},{e:"I am fine",t:"Adị m mma",p:"a-DEE m m-MA"},{e:"Thank you",t:"Daalụ",p:"DAH-loo"},{e:"Please",t:"Biko",p:"BEE-ko"},{e:"Welcome",t:"Nnọọ",p:"n-NAW-aw"},{e:"Yes",t:"Ee",p:"eh"},{e:"No",t:"Mba",p:"m-BA"},{e:"Goodbye",t:"Ka ọ dị",p:"ka AW dee"}]),
+    U("Family & people","👪",[{e:"Mother",t:"Nne",p:"n-NE"},{e:"Father",t:"Nna",p:"n-NA"},{e:"Child",t:"Nwa",p:"n-WA"},{e:"Friend",t:"Enyi",p:"EN-yi"},{e:"Sibling",t:"Nwanne",p:"n-WAN-ne"},{e:"Man",t:"Nwoke",p:"n-WO-ke"},{e:"Woman",t:"Nwaanyị",p:"n-WA-an-yee"},{e:"Name",t:"Aha",p:"a-HA"}]),
+    U("Numbers","🔢",[{e:"One",t:"Otu",p:"O-tu"},{e:"Two",t:"Abụọ",p:"a-BOO-aw"},{e:"Three",t:"Atọ",p:"a-TAW"},{e:"Four",t:"Anọ",p:"a-NAW"},{e:"Five",t:"Ise",p:"EE-se"},{e:"Six",t:"Isii",p:"ee-SEE"},{e:"Seven",t:"Asaa",p:"a-SAH"},{e:"Eight",t:"Asatọ",p:"a-sa-TAW"},{e:"Nine",t:"Itoolu",p:"ee-TOH-lu"},{e:"Ten",t:"Iri",p:"EE-ri"}]),
+    U("Food & market","🍲",[{e:"Water",t:"Mmiri",p:"m-MEE-ri"},{e:"Food",t:"Nri",p:"n-REE"},{e:"Meat",t:"Anụ",p:"a-NOO"},{e:"Milk",t:"Mmiri ara",p:"m-MEE-ri a-RA"},{e:"Tea",t:"Tii",p:"tee"},{e:"Bread",t:"Achịcha",p:"a-CHEE-cha"},{e:"Rice",t:"Osikapa",p:"o-si-KA-pa"},{e:"Money",t:"Ego",p:"EH-go"},{e:"Market",t:"Ahịa",p:"a-HEE-a"}]),
+    U("Getting around","🧭",[{e:"House",t:"Ụlọ",p:"OO-law"},{e:"Road",t:"Ụzọ",p:"OO-zaw"},{e:"Car",t:"Ụgbọ ala",p:"OO-gbaw a-LA"},{e:"School",t:"Ụlọ akwụkwọ",p:"OO-law a-KWOO-kwaw"},{e:"Hospital",t:"Ụlọ ọgwụ",p:"OO-law AW-gwoo"},{e:"Where?",t:"Ebee?",p:"e-BEH"}]),
+    U("Actions","⚡",[{e:"To go",t:"Gaa",p:"gah"},{e:"To come",t:"Bịa",p:"BEE-a"},{e:"To eat",t:"Rie",p:"REE-e"},{e:"To drink",t:"Ṅụọ",p:"NOO-aw"},{e:"To want",t:"Chọọ",p:"CHAW-aw"},{e:"To see",t:"Hụ",p:"hoo"},{e:"To know",t:"Mara",p:"MA-ra"},{e:"To sleep",t:"Rahụ",p:"RA-hoo"},{e:"To read",t:"Gụọ",p:"GOO-aw"}]),
+    U("Describing","🎨",[{e:"Good",t:"Ọma",p:"AW-ma"},{e:"Big",t:"Ukwu",p:"OO-kwu"},{e:"Small",t:"Nta",p:"n-TA"},{e:"Hot",t:"Ọkụ",p:"AW-koo"},{e:"Cold",t:"Oyi",p:"O-yi"},{e:"New",t:"Ọhụrụ",p:"AW-hoo-roo"},{e:"Many",t:"Ọtụtụ",p:"AW-too-too"}]),
+    U("Tones & script","🔤",[],[{q:"Standard Igbo taught in schools is called…",a:"Igbo izugbe",c:["Igbo izugbe","Igbo Owerri","Ajami","Nsibidi"],n:"A unified standard drawn from central dialects."},{q:"Igbo's signature feature is…",a:"Vowel harmony",c:["Vowel harmony","Clicks","An abugida","No vowels"],n:"The 8 vowels split into two harmonising groups."}])
+   ]},
+ oromo:{name:"Oromo",native:"Afaan Oromoo",model:"speak",ttsLang:"om",speaker:"Caaltuu",region:"Ethiopia · Kenya",
+   tip:"Qubee/Latin, very phonetic. Long vowels are written by doubling (a vs aa).",
+   av:{skin:"#a06a3f",head:"scarf",hc:"#d94435",hc2:"#efc35a",g:"#f0e9dd",g2:"#1f7a4d",necklace:true,wave:true},
+   proverb:{native:"Tokko jennee, lama jenna.",en:"First we say 'one', then we say 'two'.",mean:"Take the first step and the next follows — begin, and progress comes."},
+   units:[
+    U("Greetings","👋",[{e:"Hello",t:"Akkam",p:"AK-kam"},{e:"Good morning",t:"Akkam bulte?",p:"AK-kam BUL-te"},{e:"How are you?",t:"Akkam jirta?",p:"AK-kam JIR-ta"},{e:"I am fine",t:"Nagaan jira",p:"na-GAAN JI-ra"},{e:"Thank you",t:"Galatoomi",p:"ga-la-TOH-mi"},{e:"Yes",t:"Eeyyee",p:"EH-yeh"},{e:"No",t:"Lakki",p:"LAK-ki"},{e:"Goodbye",t:"Nagaatti",p:"na-GAAT-ti"}]),
+    U("Family & people","👪",[{e:"Mother",t:"Haadha",p:"HAA-dha"},{e:"Father",t:"Abbaa",p:"ab-BAA"},{e:"Child",t:"Mucaa",p:"mu-CHAA"},{e:"Friend",t:"Michuu",p:"mi-CHOO"},{e:"Brother",t:"Obboleessa",p:"ob-bo-LEES-sa"},{e:"Sister",t:"Obboleettii",p:"ob-bo-LEET-ti"},{e:"Man",t:"Dhiira",p:"DHEE-ra"},{e:"Woman",t:"Dubartii",p:"du-BAR-ti"},{e:"Name",t:"Maqaa",p:"ma-QAA"}]),
+    U("Numbers","🔢",[{e:"One",t:"Tokko",p:"TOK-ko"},{e:"Two",t:"Lama",p:"LA-ma"},{e:"Three",t:"Sadii",p:"sa-DEE"},{e:"Four",t:"Afur",p:"A-fur"},{e:"Five",t:"Shan",p:"shan"},{e:"Six",t:"Ja'a",p:"JA-a"},{e:"Seven",t:"Torba",p:"TOR-ba"},{e:"Eight",t:"Saddeet",p:"sad-DEET"},{e:"Nine",t:"Sagal",p:"sa-GAL"},{e:"Ten",t:"Kudhan",p:"ku-DHAN"}]),
+    U("Food & market","🍲",[{e:"Water",t:"Bishaan",p:"bi-SHAAN"},{e:"Food",t:"Nyaata",p:"NYAA-ta"},{e:"Meat",t:"Foon",p:"fohn"},{e:"Milk",t:"Aannan",p:"AAN-nan"},{e:"Tea",t:"Shaayii",p:"SHAA-yi"},{e:"Bread",t:"Daabboo",p:"DAAB-boh"},{e:"Money",t:"Maallaqa",p:"MAAL-la-qa"},{e:"Market",t:"Gabaa",p:"ga-BAA"}]),
+    U("Getting around","🧭",[{e:"House",t:"Mana",p:"MA-na"},{e:"Road",t:"Karaa",p:"ka-RAA"},{e:"Car",t:"Konkolaataa",p:"kon-ko-LAA-taa"},{e:"School",t:"Mana barumsaa",p:"MA-na ba-RUM-saa"},{e:"Hospital",t:"Hospitaala",p:"hos-pi-TAA-la"},{e:"Where?",t:"Eessa?",p:"EES-sa"}]),
+    U("Actions","⚡",[{e:"To go",t:"Deemuu",p:"DEE-muu"},{e:"To come",t:"Dhufuu",p:"DHU-fuu"},{e:"To eat",t:"Nyaachuu",p:"NYAA-chuu"},{e:"To drink",t:"Dhuguu",p:"DHU-guu"},{e:"To want",t:"Barbaaduu",p:"bar-BAA-duu"},{e:"To see",t:"Arguu",p:"AR-guu"},{e:"To know",t:"Beekuu",p:"BEE-kuu"},{e:"To sleep",t:"Rafuu",p:"RA-fuu"}]),
+    U("Describing","🎨",[{e:"Good",t:"Gaarii",p:"GAA-ri"},{e:"Big",t:"Guddaa",p:"gud-DAA"},{e:"Small",t:"Xiqqaa",p:"xiq-QAA"},{e:"Hot",t:"Ho'aa",p:"HO-aa"},{e:"Cold",t:"Qorra",p:"QOR-ra"},{e:"New",t:"Haaraa",p:"HAA-raa"},{e:"Many",t:"Baay'ee",p:"BAA-yee"}]),
+    U("Script & sounds","🔤",[],[{q:"In Qubee, a LONG vowel is written by…",a:"Doubling the letter",c:["Doubling the letter","An accent","A dot below","A separate symbol"],n:"e.g. a (short) vs aa (long) — and it changes meaning."}])
+   ]},
+ amharic:{name:"Amharic",native:"አማርኛ",model:"script",ttsLang:"am",speaker:"Almaz",region:"Ethiopia",
+   tip:"Uses the Fidel abugida (not Latin). Learn the syllable-characters first.",
+   av:{skin:"#8d5832",head:"shawl",hc:"#f7f4ee",hc2:"#c0392b",g:"#f7f4ee",g2:"#2a7d5f",wave:true},
+   proverb:{native:"ድር ቢያብር አንበሳ ያስር።",en:"When spider webs unite, they can tie up a lion.",mean:"Together, small things become mighty — learn one character at a time."},
+   units:[
+    U("Greetings","👋",[{e:"Hello",t:"ሰላም",p:"selam"},{e:"Good morning (m)",t:"እንደምን አደርክ",p:"endemin aderk"},{e:"How are you? (m)",t:"እንደምን ነህ",p:"endemin neh"},{e:"I am fine",t:"ደህና ነኝ",p:"dehna neñ"},{e:"Thank you",t:"አመሰግናለሁ",p:"ameseginalehu"},{e:"Please",t:"እባክህ",p:"ibakih"},{e:"Yes",t:"አዎ",p:"awo"},{e:"No",t:"የለም",p:"yelem"},{e:"Goodbye (m)",t:"ደህና ሁን",p:"dehna hun"}]),
+    U("Family & people","👪",[{e:"Mother",t:"እናት",p:"enat"},{e:"Father",t:"አባት",p:"abat"},{e:"Child",t:"ልጅ",p:"lij"},{e:"Friend",t:"ጓደኛ",p:"gwadeñña"},{e:"Brother",t:"ወንድም",p:"wendim"},{e:"Sister",t:"እህት",p:"ehit"},{e:"Man",t:"ወንድ",p:"wend"},{e:"Woman",t:"ሴት",p:"set"},{e:"Name",t:"ስም",p:"sim"}]),
+    U("Numbers","🔢",[{e:"One",t:"አንድ",p:"and"},{e:"Two",t:"ሁለት",p:"hulet"},{e:"Three",t:"ሶስት",p:"sost"},{e:"Four",t:"አራት",p:"arat"},{e:"Five",t:"አምስት",p:"ammist"},{e:"Six",t:"ስድስት",p:"siddist"},{e:"Seven",t:"ሰባት",p:"sebat"},{e:"Eight",t:"ስምንት",p:"semmint"},{e:"Nine",t:"ዘጠኝ",p:"zeteñ"},{e:"Ten",t:"አስር",p:"asir"}]),
+    U("Food & market","🍲",[{e:"Water",t:"ውሃ",p:"wuha"},{e:"Food",t:"ምግብ",p:"migib"},{e:"Meat",t:"ስጋ",p:"siga"},{e:"Milk",t:"ወተት",p:"wetet"},{e:"Tea",t:"ሻይ",p:"shay"},{e:"Bread",t:"ዳቦ",p:"dabo"},{e:"Rice",t:"ሩዝ",p:"ruz"},{e:"Money",t:"ገንዘብ",p:"genzeb"},{e:"Market",t:"ገበያ",p:"gebeya"}]),
+    U("Getting around","🧭",[{e:"House",t:"ቤት",p:"bet"},{e:"Road",t:"መንገድ",p:"menged"},{e:"Car",t:"መኪና",p:"mekina"},{e:"School",t:"ትምህርት ቤት",p:"timhirt bet"},{e:"Hospital",t:"ሆስፒታል",p:"hospital"},{e:"Where?",t:"የት?",p:"yet"}]),
+    U("Actions","⚡",[{e:"To go",t:"መሄድ",p:"mehed"},{e:"To come",t:"መምጣት",p:"memtat"},{e:"To eat",t:"መብላት",p:"mebilat"},{e:"To drink",t:"መጠጣት",p:"metetat"},{e:"To want",t:"መፈለግ",p:"mefeleg"},{e:"To see",t:"ማየት",p:"mayet"},{e:"To know",t:"ማወቅ",p:"maweq"},{e:"To sleep",t:"መተኛት",p:"metegnat"}]),
+    U("Describing","🎨",[{e:"Good",t:"ጥሩ",p:"tiru"},{e:"Big",t:"ትልቅ",p:"tiliq"},{e:"Small",t:"ትንሽ",p:"tinish"},{e:"Hot",t:"ሙቅ",p:"muq"},{e:"Cold",t:"ቀዝቃዛ",p:"qezqazza"},{e:"New",t:"አዲስ",p:"addis"},{e:"Many",t:"ብዙ",p:"bizu"}]),
+    U("Courtesy","🙏",[{e:"Thank you very much",t:"በጣም አመሰግናለሁ",p:"betam ameseginalehu"},{e:"You're welcome",t:"ምንም አይደለም",p:"minim aydelem"},{e:"Sorry / excuse me",t:"ይቅርታ",p:"yiqirta"},{e:"No problem",t:"ችግር የለም",p:"chigir yelem"},{e:"Okay",t:"እሺ",p:"eshi"},{e:"Welcome",t:"እንኳን ደህና መጣህ",p:"enkuan dehna metah"},{e:"See you later",t:"በኋላ እንገናኛለን",p:"behuala engenañalen"},{e:"Have a good day",t:"መልካም ቀን",p:"melkam qen"}]),
+    U("Colors","🌈",[{e:"Red",t:"ቀይ",p:"qey"},{e:"Blue",t:"ሰማያዊ",p:"semayawi"},{e:"Green",t:"አረንጓዴ",p:"arenguade"},{e:"Yellow",t:"ቢጫ",p:"bicha"},{e:"Black",t:"ጥቁር",p:"tiqur"},{e:"White",t:"ነጭ",p:"nech"},{e:"Color",t:"ቀለም",p:"qelem"}]),
+    U("Days & time","📅",[{e:"Today",t:"ዛሬ",p:"zare"},{e:"Tomorrow",t:"ነገ",p:"nege"},{e:"Yesterday",t:"ትናንት",p:"tinant"},{e:"Now",t:"አሁን",p:"ahun"},{e:"Morning",t:"ጠዋት",p:"tewat"},{e:"Night",t:"ሌሊት",p:"lelit"},{e:"Week",t:"ሳምንት",p:"samint"},{e:"Monday",t:"ሰኞ",p:"seño"},{e:"Friday",t:"ዓርብ",p:"arb"},{e:"Sunday",t:"እሁድ",p:"ehud"}]),
+    U("Questions & people","❓",[{e:"Who",t:"ማን",p:"man"},{e:"What",t:"ምን",p:"min"},{e:"Where",t:"የት",p:"yet"},{e:"When",t:"መቼ",p:"meche"},{e:"Why",t:"ለምን",p:"lemin"},{e:"How",t:"እንዴት",p:"endet"},{e:"How much",t:"ስንት",p:"sint"},{e:"I",t:"እኔ",p:"ine"},{e:"You (m)",t:"አንተ",p:"ante"},{e:"We",t:"እኛ",p:"iña"}]),
+    U("Phrases & sentences","💬",[{e:"What is your name? (m)",t:"ስምህ ማን ነው?",p:"simih man new"},{e:"My name is …",t:"ስሜ ... ነው",p:"sime ... new"},{e:"Nice to meet you",t:"ስለተዋወቅን ደስ ብሎኛል",p:"sile tewaweqin des bloñal"},{e:"Where are you from? (m)",t:"ከየት ነህ?",p:"keyet neh"},{e:"I am from Ethiopia",t:"ከኢትዮጵያ ነኝ",p:"ke'ityoppya neñ"},{e:"I am learning Amharic",t:"አማርኛ እየተማርኩ ነው",p:"amariña iyetemarku new"},{e:"I don't understand",t:"አልገባኝም",p:"algebañim"},{e:"What is this?",t:"ይህ ምንድን ነው?",p:"yih mindin new"},{e:"How much is this?",t:"ይህ ስንት ነው?",p:"yih sint new"},{e:"I want water",t:"ውሃ እፈልጋለሁ",p:"wiha efeligalehu"},{e:"I like coffee",t:"ቡና እወዳለሁ",p:"buna ewedalehu"},{e:"I am hungry",t:"ተርቦኛል",p:"terboñal"},{e:"Let's go",t:"እንሂድ",p:"enhid"}]),
+    U("Fidel script","🔤",[],[{q:"Which Fidel character says “se” (as in selam)?",a:"ሰ",c:["ሰ","ለ","በ","ተ"],n:"ሰ = se. Fidel characters are consonant+vowel syllables."},{q:"Which Fidel character says “le”?",a:"ለ",c:["ለ","መ","ሰ","ነ"],n:"ለ = le."},{q:"The Amharic writing system is a(n)…",a:"Abugida",c:["Abugida","Alphabet","Abjad","Logography"],n:"Each symbol = a consonant + a vowel; ~33 bases × 7 orders."},{q:"How many vowel 'orders' does each base consonant have?",a:"Seven",c:["Seven","Three","Five","Twelve"],n:"33 consonants × 7 orders ≈ 231 core symbols."}])
+   ]},
+ shona:{name:"Shona",native:"chiShona",model:"speak",ttsLang:"sn",speaker:"Tendai",region:"Zimbabwe",
+   tip:"Latin, phonetic. Tone is unwritten; watch the whistled sv / zv sounds.",
+   av:{skin:"#7d4a25",head:"headwrap",hc:"#e0a020",hc2:"#b0343f",g:"#2f7d8a",g2:"#e0a020",wave:true},
+   proverb:{native:"Chara chimwe hachitswanyi inda.",en:"One finger cannot crush a louse.",mean:"We accomplish more together — lean on your guide and community as you learn."},
+   units:[
+    U("Greetings","👋",[{e:"Hello (to one)",t:"Mhoro",p:"MHO-ro"},{e:"Good morning",t:"Mangwanani",p:"man-gwa-NA-ni"},{e:"How are you?",t:"Wakadii?",p:"wa-ka-DEE"},{e:"I am fine",t:"Ndiripo",p:"ndi-REE-po"},{e:"Thank you",t:"Maita basa",p:"ma-EE-ta BA-sa"},{e:"Please",t:"Ndapota",p:"nda-PO-ta"},{e:"Yes",t:"Ehe",p:"E-he"},{e:"No",t:"Kwete",p:"KWE-te"},{e:"Goodbye (stay well)",t:"Chisarai",p:"chi-sa-RYE"}]),
+    U("Family & people","👪",[{e:"Mother",t:"Amai",p:"a-MY"},{e:"Father",t:"Baba",p:"BA-ba"},{e:"Child",t:"Mwana",p:"MWA-na"},{e:"Friend",t:"Shamwari",p:"sham-WA-ri"},{e:"Elder sibling",t:"Mukoma",p:"mu-KO-ma"},{e:"Younger sibling",t:"Munin'ina",p:"mu-NIN-i-na"},{e:"Man",t:"Murume",p:"mu-RU-me"},{e:"Woman",t:"Mukadzi",p:"mu-KA-dzi"},{e:"Name",t:"Zita",p:"ZEE-ta"}]),
+    U("Numbers","🔢",[{e:"One",t:"Poshi",p:"PO-shi"},{e:"Two",t:"Piri",p:"PEE-ri"},{e:"Three",t:"Tatu",p:"TA-tu"},{e:"Four",t:"China",p:"CHEE-na"},{e:"Five",t:"Shanu",p:"SHA-nu"},{e:"Six",t:"Tanhatu",p:"tan-HA-tu"},{e:"Seven",t:"Nomwe",p:"NOM-we"},{e:"Eight",t:"Sere",p:"SE-re"},{e:"Nine",t:"Pfumbamwe",p:"pfum-BAM-we"},{e:"Ten",t:"Gumi",p:"GU-mi"}]),
+    U("Food & market","🍲",[{e:"Water",t:"Mvura",p:"m-VU-ra"},{e:"Food",t:"Chikafu",p:"chi-KA-fu"},{e:"Meat",t:"Nyama",p:"NYA-ma"},{e:"Milk",t:"Mukaka",p:"mu-KA-ka"},{e:"Tea",t:"Tii",p:"tee"},{e:"Bread",t:"Chingwa",p:"CHING-wa"},{e:"Rice",t:"Mupunga",p:"mu-PUN-ga"},{e:"Money",t:"Mari",p:"MA-ri"},{e:"Market",t:"Musika",p:"mu-SEE-ka"}]),
+    U("Getting around","🧭",[{e:"House",t:"Imba",p:"EEM-ba"},{e:"Road",t:"Mugwagwa",p:"mu-GWA-gwa"},{e:"Car",t:"Mota",p:"MO-ta"},{e:"School",t:"Chikoro",p:"chi-KO-ro"},{e:"Hospital",t:"Chipatara",p:"chi-pa-TA-ra"},{e:"Where?",t:"Kupi?",p:"KU-pi"}]),
+    U("Actions","⚡",[{e:"To go",t:"Enda",p:"EN-da"},{e:"To come",t:"Uya",p:"OO-ya"},{e:"To eat",t:"Dya",p:"dya"},{e:"To drink",t:"Nwa",p:"nwa"},{e:"To want / love",t:"Da",p:"da"},{e:"To see",t:"Ona",p:"O-na"},{e:"To know",t:"Ziva",p:"ZEE-va"},{e:"To sleep",t:"Rara",p:"RA-ra"},{e:"To read",t:"Verenga",p:"ve-REN-ga"}]),
+    U("Describing","🎨",[{e:"Good / nice",t:"Zvakanaka",p:"zva-ka-NA-ka"},{e:"Big",t:"Hombe",p:"HOM-be"},{e:"Small",t:"Diki",p:"DEE-ki"},{e:"Hot",t:"Kupisa",p:"ku-PEE-sa"},{e:"Cold",t:"Kutonhora",p:"ku-ton-HO-ra"},{e:"New",t:"Itsva",p:"EE-tsva"},{e:"Many",t:"Zhinji",p:"ZHIN-ji"}]),
+    U("Sounds","🔤",[],[{q:"Shona's 'whistled' sibilants are written…",a:"sv / zv",c:["sv / zv","c / q / x","gb / kp","dh / th"],n:"A whistling quality on top of s / z — distinctive to Shona."}])
+   ]},
+ zulu:{name:"Zulu",native:"isiZulu",model:"sound",ttsLang:"zu",speaker:"Nomsa",region:"South Africa",
+   tip:"Latin, but three clicks (c q x) + tone. Train the clicks first.",
+   av:{skin:"#875531",head:"flared",hc:"#c0392b",hc2:"#efc35a",g:"#8a1f1f",g2:"#efc35a",necklace:true,wave:true},
+   proverb:{native:"Umuntu ngumuntu ngabantu.",en:"A person is a person through other people.",mean:"The heart of ubuntu — we become ourselves through connection with others."},
+   units:[
+    U("Greetings","👋",[{e:"Hello (to one)",t:"Sawubona",p:"sa-wu-BO-na"},{e:"Hello (to many)",t:"Sanibonani",p:"sa-ni-bo-NA-ni"},{e:"How are you?",t:"Unjani?",p:"un-JA-ni"},{e:"I am fine",t:"Ngikhona",p:"ngi-KO-na"},{e:"Thank you",t:"Ngiyabonga",p:"ngi-ya-BON-ga"},{e:"Please",t:"Ngicela",p:"ngi-CE-la"},{e:"Yes",t:"Yebo",p:"YE-bo"},{e:"No",t:"Cha",p:"cha"},{e:"Goodbye (stay well)",t:"Sala kahle",p:"SA-la KA-shle"}]),
+    U("Family & people","👪",[{e:"Mother",t:"Umama",p:"u-MA-ma"},{e:"Father",t:"Ubaba",p:"u-BA-ba"},{e:"Child",t:"Ingane",p:"in-GA-ne"},{e:"Friend",t:"Umngane",p:"um-NGA-ne"},{e:"Brother",t:"Umfowethu",p:"um-fo-WE-tu"},{e:"Sister",t:"Udadewethu",p:"u-da-de-WE-tu"},{e:"Man",t:"Indoda",p:"in-DO-da"},{e:"Woman",t:"Owesifazane",p:"o-we-si-fa-ZA-ne"},{e:"Name",t:"Igama",p:"i-GA-ma"}]),
+    U("Numbers","🔢",[{e:"One",t:"Kunye",p:"KU-nye"},{e:"Two",t:"Kubili",p:"ku-BEE-li"},{e:"Three",t:"Kuthathu",p:"ku-TA-tu"},{e:"Four",t:"Kune",p:"KU-ne"},{e:"Five",t:"Kuhlanu",p:"ku-SHLA-nu"},{e:"Six",t:"Isithupha",p:"i-si-TU-pa"},{e:"Seven",t:"Isikhombisa",p:"i-si-kom-BEE-sa"},{e:"Eight",t:"Isishiyagalombili",p:"i-si-shi-ya-ga-lom-BEE-li"},{e:"Ten",t:"Ishumi",p:"i-SHU-mi"}]),
+    U("Food & market","🍲",[{e:"Water",t:"Amanzi",p:"a-MAN-zi"},{e:"Food",t:"Ukudla",p:"u-KUD-la"},{e:"Meat",t:"Inyama",p:"in-YA-ma"},{e:"Milk",t:"Ubisi",p:"u-BEE-si"},{e:"Tea",t:"Itiye",p:"i-TEE-ye"},{e:"Bread",t:"Isinkwa",p:"i-SIN-kwa"},{e:"Rice",t:"Irayisi",p:"i-ra-YEE-si"},{e:"Money",t:"Imali",p:"i-MA-li"},{e:"Market",t:"Imakethe",p:"i-ma-KE-te"}]),
+    U("Getting around","🧭",[{e:"House",t:"Indlu",p:"IN-dlu"},{e:"Road",t:"Umgwaqo",p:"um-GWA-qo"},{e:"Car",t:"Imoto",p:"i-MO-to"},{e:"School",t:"Isikole",p:"i-si-KO-le"},{e:"Hospital",t:"Isibhedlela",p:"i-si-bed-LE-la"},{e:"Where?",t:"Kuphi?",p:"KU-pi"}]),
+    U("Actions","⚡",[{e:"To go",t:"Hamba",p:"HAM-ba"},{e:"To come",t:"Woza",p:"WO-za"},{e:"To eat",t:"Dla",p:"dla"},{e:"To drink",t:"Phuza",p:"PU-za"},{e:"To want",t:"Funa",p:"FU-na"},{e:"To see",t:"Bona",p:"BO-na"},{e:"To know",t:"Azi",p:"A-zi"},{e:"To sleep",t:"Lala",p:"LA-la"},{e:"To read",t:"Funda",p:"FUN-da"}]),
+    U("Describing","🎨",[{e:"Beautiful / good",t:"Muhle",p:"MU-shle"},{e:"Big",t:"Omkhulu",p:"om-KU-lu"},{e:"Small",t:"Omncane",p:"om-NCA-ne"},{e:"Hot",t:"Shisa",p:"SHEE-sa"},{e:"Cold",t:"Banda",p:"BAN-da"},{e:"New",t:"Musha",p:"MU-sha"},{e:"Many",t:"Iningi",p:"i-NIN-gi"}]),
+    U("Clicks & tone","🔤",[],[{q:"Which letter spells the DENTAL click (a soft 'tsk')?",a:"c",c:["c","q","x","k"],n:"c = dental, q = alveolar (pop), x = lateral (side)."},{q:"Which letter spells the LATERAL click (like urging a horse)?",a:"x",c:["x","c","q","h"],n:"x = lateral click, made at the side of the mouth."},{q:"'Sawubona' literally means…",a:"I see you",c:["I see you","Good day","Thank you","Welcome"],n:"It reflects the philosophy of ubuntu."}])
+   ]},
+ fula:{name:"Fula",native:"Pulaar / Fulfulde",model:"speak",ttsLang:"ff",speaker:"Aïssatou",region:"Senegal → Sahel",
+   tip:"Latin. Taught here in Pulaar. Watch implosives ɓ ɗ ƴ and many noun classes.",
+   av:{skin:"#9a613a",head:"scarf",hc:"#3b4a8b",hc2:"#efc35a",g:"#c98a2b",g2:"#3b4a8b",earrings:true,necklace:true,wave:true},
+   proverb:{native:"Juuɗe ɗiɗi lootondirta, ɗe laaɓa.",en:"Two hands wash each other, and both come clean.",mean:"We help one another — learning grows through exchange and community."},
+   units:[
+    U("Greetings","👋",[{e:"Peace / hello",t:"Jam tan",p:"jam tan"},{e:"Good morning",t:"Jam waali?",p:"jam WAA-li"},{e:"How are you?",t:"No mbaɗɗaa?",p:"no m-BAD-daa"},{e:"Thank you",t:"A jaaraama",p:"a jaa-RAA-ma"},{e:"Yes",t:"Eey",p:"ey"},{e:"No",t:"Alaa",p:"a-LAA"},{e:"Goodbye",t:"Ñallen e jam",p:"NYAL-len e jam"}]),
+    U("Family & people","👪",[{e:"Mother",t:"Neene",p:"NEH-ne"},{e:"Father",t:"Baaba",p:"BAA-ba"},{e:"Child",t:"Ɓiɗɗo",p:"BID-do"},{e:"Friend",t:"Giɗo",p:"GEE-do"},{e:"Man",t:"Gorko",p:"GOR-ko"},{e:"Woman",t:"Debbo",p:"DEB-bo"},{e:"Name",t:"Innde",p:"IN-de"}]),
+    U("Numbers","🔢",[{e:"One",t:"Go'o",p:"GO-o"},{e:"Two",t:"Ɗiɗi",p:"DEE-di"},{e:"Three",t:"Tati",p:"TA-ti"},{e:"Four",t:"Nayi",p:"NA-yi"},{e:"Five",t:"Jowi",p:"JO-wi"},{e:"Six",t:"Jeegom",p:"JEH-gom"},{e:"Seven",t:"Jeeɗiɗi",p:"jeh-DEE-di"},{e:"Ten",t:"Sappo",p:"SAP-po"}]),
+    U("Food & market","🍲",[{e:"Water",t:"Ndiyam",p:"n-DEE-yam"},{e:"Food",t:"Ñaamdu",p:"NYAAM-du"},{e:"Meat",t:"Teew",p:"tehw"},{e:"Milk",t:"Kosam",p:"KO-sam"},{e:"Tea",t:"Ataaya",p:"a-TAA-ya"},{e:"Bread",t:"Mburu",p:"m-BU-ru"},{e:"Rice",t:"Maaro",p:"MAA-ro"},{e:"Money",t:"Ceede",p:"CHEH-de"},{e:"Market",t:"Luumo",p:"LOO-mo"}]),
+    U("Getting around","🧭",[{e:"House",t:"Suudu",p:"SOO-du"},{e:"Road",t:"Laawol",p:"LAA-wol"},{e:"Car",t:"Oto",p:"O-to"},{e:"School",t:"Ekkol",p:"EK-kol"},{e:"Where?",t:"Honto?",p:"HON-to"}]),
+    U("Actions","⚡",[{e:"To go",t:"Yahde",p:"YAH-de"},{e:"To come",t:"Warde",p:"WAR-de"},{e:"To eat",t:"Ñaamde",p:"NYAAM-de"},{e:"To drink",t:"Yarde",p:"YAR-de"},{e:"To want / love",t:"Yiɗde",p:"YID-de"},{e:"To see",t:"Yiide",p:"YEE-de"},{e:"To know",t:"Anndude",p:"AN-du-de"}]),
+    U("Describing","🎨",[{e:"Good",t:"Moƴƴo",p:"MO-yyo"},{e:"Big",t:"Mawɗo",p:"MAW-do"},{e:"Small",t:"Tokoso",p:"to-KO-so"},{e:"New",t:"Keso",p:"KE-so"},{e:"Many",t:"Ɗuuɗɗo",p:"DOO-do"}]),
+    U("About Fula","🔤",[],[{q:"Fula/Fulfulde is best described as…",a:"A dialect continuum",c:["A dialect continuum","One fixed standard","A script","Non-verbal"],n:"Pulaar (west) to Fulfulde (east) across ~20 countries — pick one to teach."},{q:"How many noun classes does Fula have (roughly)?",a:"20–26",c:["20–26","2","5","0"],n:"One of the most class-rich languages — its main grammar challenge."}])
+   ]},
+ somali:{name:"Somali",native:"Af-Soomaali",model:"speak",ttsLang:"so",speaker:"Hodan",region:"Somalia · Horn of Africa",
+   tip:"Latin, regular spelling. Master throat sounds c (ʕ), x (ħ), q first.",
+   av:{skin:"#93603a",head:"scarf",hc:"#1f8a6b",hc2:"#efc35a",g:"#e8ddc7",g2:"#c0392b",wave:true},
+   proverb:{native:"Aqoon la'aani waa iftiin la'aan.",en:"To be without knowledge is to be without light.",mean:"Learning lights the way — every word you learn is a candle lit."},
+   units:[
+    U("Greetings","👋",[{e:"Hello / greetings",t:"Salaan",p:"sa-LAAN"},{e:"Good morning",t:"Subax wanaagsan",p:"SU-bakh wa-NAAG-san"},{e:"How are you?",t:"Iska warran?",p:"IS-ka WA-rran"},{e:"I am fine",t:"Waan fiicanahay",p:"waan fee-CA-na-hay"},{e:"Thank you",t:"Mahadsanid",p:"ma-had-SA-nid"},{e:"Please",t:"Fadlan",p:"FAD-lan"},{e:"Yes",t:"Haa",p:"haa"},{e:"No",t:"Maya",p:"MA-ya"},{e:"Goodbye",t:"Nabadgelyo",p:"na-bad-GEL-yo"}]),
+    U("Family & people","👪",[{e:"Mother",t:"Hooyo",p:"HOH-yo"},{e:"Father",t:"Aabbe",p:"AAB-be"},{e:"Child",t:"Ilmo",p:"IL-mo"},{e:"Friend",t:"Saaxiib",p:"saa-KHEEB"},{e:"Sibling",t:"Walaal",p:"wa-LAAL"},{e:"Man",t:"Nin",p:"nin"},{e:"Woman",t:"Naag",p:"naag"},{e:"Name",t:"Magac",p:"MA-gac"}]),
+    U("Numbers","🔢",[{e:"One",t:"Kow",p:"kow"},{e:"Two",t:"Laba",p:"LA-ba"},{e:"Three",t:"Saddex",p:"SAD-deh"},{e:"Four",t:"Afar",p:"A-far"},{e:"Five",t:"Shan",p:"shan"},{e:"Six",t:"Lix",p:"lih"},{e:"Seven",t:"Toddoba",p:"tod-DO-ba"},{e:"Eight",t:"Siddeed",p:"sid-DEED"},{e:"Nine",t:"Sagaal",p:"sa-GAAL"},{e:"Ten",t:"Toban",p:"TO-ban"}]),
+    U("Food & market","🍲",[{e:"Water",t:"Biyo",p:"BEE-yo"},{e:"Food",t:"Cunto",p:"CUN-to"},{e:"Meat",t:"Hilib",p:"HEE-lib"},{e:"Milk",t:"Caano",p:"CAA-no"},{e:"Tea",t:"Shaah",p:"shaah"},{e:"Bread",t:"Rooti",p:"ROH-ti"},{e:"Rice",t:"Bariis",p:"ba-REES"},{e:"Money",t:"Lacag",p:"LA-cag"},{e:"Market",t:"Suuq",p:"sooq"}]),
+    U("Getting around","🧭",[{e:"House",t:"Guri",p:"GU-ri"},{e:"Road",t:"Waddo",p:"WAD-do"},{e:"Car",t:"Baabuur",p:"baa-BOOR"},{e:"School",t:"Dugsi",p:"DUG-si"},{e:"Hospital",t:"Isbitaal",p:"is-bi-TAAL"},{e:"Where?",t:"Xaggee?",p:"hag-GEH"}]),
+    U("Actions","⚡",[{e:"To go",t:"Tag",p:"tag"},{e:"To come",t:"Kaalay",p:"KAA-lay"},{e:"To eat",t:"Cun",p:"cun"},{e:"To drink",t:"Cab",p:"cab"},{e:"To want",t:"Rab",p:"rab"},{e:"To see",t:"Arag",p:"A-rag"},{e:"To know",t:"Ogow",p:"O-gow"},{e:"To sleep",t:"Seexo",p:"SEH-ho"},{e:"To read",t:"Akhri",p:"AKH-ri"}]),
+    U("Describing","🎨",[{e:"Good",t:"Fiican",p:"FEE-can"},{e:"Big",t:"Weyn",p:"weyn"},{e:"Small",t:"Yar",p:"yar"},{e:"Hot",t:"Kulul",p:"ku-LUL"},{e:"Cold",t:"Qabow",p:"qa-BOW"},{e:"New",t:"Cusub",p:"CU-sub"},{e:"Many",t:"Badan",p:"BA-dan"}]),
+    U("Sounds","🔤",[],[{q:"The Somali letter 'x' represents…",a:"A deep 'h' (ħ)",c:["A deep 'h' (ħ)","'ks' as in English","A click","Silence"],n:"x = pharyngeal ħ, a throat sound with no English match."},{q:"Somali pitch-accent can distinguish…",a:"Masculine vs feminine",c:["Masculine vs feminine","Past vs future","Big vs small","Nothing"],n:"e.g. ínan 'boy' vs inán 'girl'."}])
+   ]},
+ tigrinya:{name:"Tigrinya",native:"ትግርኛ",model:"script",ttsLang:"ti",speaker:"Rahwa",region:"Eritrea · Tigray",
+   tip:"Uses the Ge'ez script (like Amharic). Learn the syllable-characters first.",
+   av:{skin:"#8d5832",head:"shawl",hc:"#f7f4ee",hc2:"#c0392b",g:"#f7f4ee",g2:"#2a7d5f",wave:true},
+   proverb:{native:"ሓንቲ ኢድ ገጽ ኣይትሓጽብን።",en:"One hand cannot wash a face.",mean:"We need each other — learning grows through help and community.",p:"ḥanti id gets aytḥatsben"},
+   sent:[{e:"My name is Rahwa",t:"ሽመይ ራህዋ እዩ",p:"shimey Rahwa iyu"},{e:"I am fine",t:"ደሓን እየ",p:"dehan iye"},{e:"The water is good",t:"እቲ ማይ ጽቡቕ እዩ",p:"iti may tsbuq iyu"}],
+   units:[
+    U("Greetings","👋",[{e:"Hello",t:"ሰላም",p:"selam"},{e:"Good morning (m)",t:"ደሓን ሓዲርካ",p:"dehan hadirka"},{e:"How are you? (m)",t:"ከመይ ኣለኻ",p:"kemey aleka"},{e:"I am fine",t:"ደሓን እየ",p:"dehan iye"},{e:"Thank you",t:"የቐንየለይ",p:"yekenyeley"},{e:"Please (m)",t:"በጃኻ",p:"bejaka"},{e:"Yes",t:"እወ",p:"iwe"},{e:"No",t:"ኣይፋልን",p:"ayfaln"},{e:"Goodbye (m)",t:"ደሓን ኩን",p:"dehan kun"}]),
+    U("Family & people","👪",[{e:"Mother",t:"ኣደ",p:"ade"},{e:"Father",t:"ኣቦ",p:"abo"},{e:"Child",t:"ቆልዓ",p:"qolʿa"},{e:"Friend",t:"ዓርኪ",p:"arki"},{e:"Brother",t:"ሓው",p:"ḥaw"},{e:"Sister",t:"ሓፍቲ",p:"ḥafti"},{e:"Man",t:"ሰብኣይ",p:"sebʾay"},{e:"Woman",t:"ሰበይቲ",p:"sebeyti"},{e:"Name",t:"ሽም",p:"shim"}]),
+    U("Numbers","🔢",[{e:"One",t:"ሓደ",p:"ḥade"},{e:"Two",t:"ክልተ",p:"kilte"},{e:"Three",t:"ሰለስተ",p:"seleste"},{e:"Four",t:"ኣርባዕተ",p:"arbaʿte"},{e:"Five",t:"ሓሙሽተ",p:"ḥamushte"},{e:"Six",t:"ሽዱሽተ",p:"shdushte"},{e:"Seven",t:"ሸውዓተ",p:"shewʿate"},{e:"Eight",t:"ሸሞንተ",p:"shemonte"},{e:"Nine",t:"ትሽዓተ",p:"tishʿate"},{e:"Ten",t:"ዓሰርተ",p:"ʿaserte"}]),
+    U("Food & market","🍲",[{e:"Water",t:"ማይ",p:"may"},{e:"Food",t:"መግቢ",p:"megbi"},{e:"Meat",t:"ስጋ",p:"sga"},{e:"Milk",t:"ጸባ",p:"tseba"},{e:"Tea",t:"ሻሂ",p:"shahi"},{e:"Bread",t:"ባኒ",p:"bani"},{e:"Money",t:"ገንዘብ",p:"genzeb"},{e:"Market",t:"ዕዳጋ",p:"ʿedaga"}]),
+    U("Getting around","🧭",[{e:"House",t:"ገዛ",p:"geza"},{e:"Road",t:"መገዲ",p:"megedi"},{e:"Car",t:"መኪና",p:"mekina"},{e:"School",t:"ቤት ትምህርቲ",p:"bet timhirti"},{e:"Where?",t:"ኣበይ",p:"abey"}]),
+    U("Actions","⚡",[{e:"To go",t:"ምኻድ",p:"mkhad"},{e:"To come",t:"ምምጻእ",p:"mmtsaʾ"},{e:"To eat",t:"ምብላዕ",p:"mblaʿ"},{e:"To drink",t:"ምስታይ",p:"mstay"},{e:"To see",t:"ምርኣይ",p:"mrʾay"},{e:"To know",t:"ምፍላጥ",p:"mflaT"}]),
+    U("Describing","🎨",[{e:"Good",t:"ጽቡቕ",p:"tsbuq"},{e:"Big",t:"ዓቢ",p:"ʿabi"},{e:"Small",t:"ንእሽቶ",p:"nishto"},{e:"Hot",t:"ውዑይ",p:"wuʿuy"},{e:"Cold",t:"ዝሑል",p:"zhul"},{e:"New",t:"ሓድሽ",p:"ḥadish"},{e:"Many",t:"ብዙሕ",p:"bzuḥ"}]),
+    U("Ge'ez script","🔤",[],[{q:"Tigrinya is written in the…",a:"Ge'ez script",c:["Ge'ez script","Latin alphabet","Arabic script","Tifinagh"],n:"The same abugida family as Amharic — each symbol is a consonant+vowel syllable."}])
+   ]},
+ tamazight:{name:"Tamazight",native:"ⵜⴰⵎⴰⵣⵉⵖⵜ",model:"speak",ttsLang:"zgh",speaker:"Tanirt",region:"Morocco · North Africa",
+   tip:"Amazigh (Berber). Written in Tifinagh ⵜⵉⴼⵉⵏⴰⵖ; shown here in Latin for easy reading.",
+   av:{skin:"#a06a3f",head:"scarf",hc:"#c0392b",hc2:"#efc35a",g:"#e8ddc7",g2:"#1f6f98",necklace:true,wave:true},
+   proverb:{native:"Afus deg ufus.",en:"Hand in hand.",mean:"Together we go further — learn alongside your community.",p:"a-FUS deg u-FUS"},
+   sent:[{e:"Hello, how are you?",t:"Azul, labas?",p:"a-ZUL la-BAS"},{e:"The water is good",t:"Aman d yelhan",p:"a-MAN d yel-HAN"},{e:"My name is Tanirt",t:"Isem-inu Tanirt",p:"i-SEM-i-nu ta-NIRT"}],
+   units:[
+    U("Greetings","👋",[{e:"Hello",t:"Azul",p:"a-ZUL"},{e:"Good morning",t:"Tifawin",p:"ti-fa-WIN"},{e:"How are you?",t:"Labas?",p:"la-BAS"},{e:"I am fine",t:"Labas",p:"la-BAS"},{e:"Thank you",t:"Tanemmirt",p:"ta-nem-MIRT"},{e:"Please (m)",t:"Ttxil-k",p:"t-TKHIL-k"},{e:"Yes",t:"Yah",p:"yah"},{e:"No",t:"Uhu",p:"OO-hoo"},{e:"Goodbye",t:"Ar tufat",p:"ar too-FAT"}]),
+    U("Family & people","👪",[{e:"Mother",t:"Yemma",p:"YEM-ma"},{e:"Father",t:"Baba",p:"BA-ba"},{e:"Child (boy)",t:"Arba",p:"AR-ba"},{e:"Friend",t:"Amdakkul",p:"am-dak-KUL"},{e:"Man",t:"Argaz",p:"ar-GAZ"},{e:"Woman",t:"Tamghart",p:"tam-GHART"},{e:"Name",t:"Isem",p:"i-SEM"}]),
+    U("Numbers","🔢",[{e:"One",t:"Yan",p:"yan"},{e:"Two",t:"Sin",p:"seen"},{e:"Three",t:"Kraḍ",p:"krad"},{e:"Four",t:"Kkuz",p:"kooz"},{e:"Five",t:"Smmus",p:"s-MOOS"},{e:"Six",t:"Sḍis",p:"s-DEES"},{e:"Seven",t:"Sa",p:"sa"},{e:"Eight",t:"Tam",p:"tam"},{e:"Nine",t:"Tẓa",p:"t-ZA"},{e:"Ten",t:"Mraw",p:"m-RAW"}]),
+    U("Food & market","🍲",[{e:"Water",t:"Aman",p:"a-MAN"},{e:"Food",t:"Učči",p:"OOCH-chi"},{e:"Meat",t:"Aksum",p:"ak-SUM"},{e:"Milk",t:"Akffay",p:"ak-FAY"},{e:"Tea",t:"Atay",p:"a-TAY"},{e:"Bread",t:"Aɣrum",p:"agh-RUM"},{e:"Money",t:"Idrimen",p:"id-ri-MEN"},{e:"Market",t:"Ssuq",p:"sook"}]),
+    U("Getting around","🧭",[{e:"House",t:"Taddart",p:"tad-DART"},{e:"Road",t:"Abrid",p:"a-BRID"},{e:"School",t:"Aɣerbaz",p:"a-gher-BAZ"},{e:"Where?",t:"Mani",p:"MA-ni"}]),
+    U("Actions","⚡",[{e:"To go",t:"Ddu",p:"d-DOO"},{e:"To come",t:"Ašk",p:"ashk"},{e:"To eat",t:"Šš",p:"sh-sh"},{e:"To drink",t:"Su",p:"soo"},{e:"To see",t:"Ẓr",p:"zr"}]),
+    U("Describing","🎨",[{e:"Good",t:"Yelha",p:"YEL-ha"},{e:"Big",t:"Ameqqran",p:"a-meq-QRAN"},{e:"Small",t:"Ameẓẓyan",p:"a-mez-ZYAN"},{e:"Hot",t:"Iḥma",p:"IH-ma"},{e:"Cold",t:"Asemmiḍ",p:"a-sem-MID"},{e:"New",t:"Amaynu",p:"a-MY-noo"},{e:"Many",t:"Aṭṭas",p:"at-TAS"}]),
+    U("Tifinagh","🔤",[],[{q:"Tamazight's own alphabet is called…",a:"Tifinagh",c:["Tifinagh","Ge'ez","Latin","Cyrillic"],n:"ⵜⵉⴼⵉⵏⴰⵖ — an ancient Amazigh script; Latin is also widely used."}])
+   ]}
+};
+
+const MODEL_LABEL={speak:"Speaking-first",sound:"Sound-first",script:"Script-first"};
+const MODEL_CLASS={speak:"m-speak",sound:"m-sound",script:"m-script"};
+const MAX_HEARTS=5, LESSON_CAP=14, DAY=86400000;
+
+/* ---------- state ---------- */
+function defaultState(){return{currentLang:null,seenIntro:false,aiKey:"",progress:{},totalXP:0,streak:{count:0,last:null},
+  garden:{water:0,seeds:1,houses:0,plots:Array.from({length:6},()=>({planted:false,stage:0,wilted:false})),lastActive:Date.now()}};}
+let state=defaultState();
+function loadState(){try{const s=JSON.parse(localStorage.getItem("afrology_v2"));if(s){state=Object.assign(defaultState(),s);state.garden=Object.assign(defaultState().garden,s.garden||{});if(!Array.isArray(state.garden.plots)||state.garden.plots.length!==6)state.garden.plots=defaultState().garden.plots;state.streak=Object.assign({count:0,last:null},s.streak||{});state.progress=s.progress||{};}}catch(e){}}
+function saveState(){try{localStorage.setItem("afrology_v2",JSON.stringify(state));}catch(e){}}
+function unlocked(key){return state.progress[key]||1;}
+
+/* lesson-scope */
+let cur=null,curKey=null,curUnit=0,isPractice=false,pool=[],idx=0,hearts=MAX_HEARTS,xp=0,correct=0,answered=false,selected=null,curQ=null,cultureAt=-1,cultureShown=false,hintsLeft=3,currentHinted=false;
+
+const $=id=>document.getElementById(id);
+function animate(el,cls){if(!el)return;try{el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls);}catch(e){}}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function slugify(s){return (s||"").toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
+let toastT=null;
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),1900);}
+
+/* ---------- avatars ---------- */
+function avatar(cfg){
+  const k=cfg,skin=k.skin,g=k.g,g2=k.g2||"#00000022",hc=k.hc,hc2=k.hc2||"#00000022";
+  let head="";
+  switch(k.head){
+    case "cap": head=`<path d="M30 40 A20 20 0 0 1 70 40 Z" fill="${hc}"/><rect x="30" y="37" width="40" height="6" fill="${hc2}"/><circle cx="42" cy="30" r="1.6" fill="${hc2}"/><circle cx="50" cy="27" r="1.6" fill="${hc2}"/><circle cx="58" cy="30" r="1.6" fill="${hc2}"/>`; break;
+    case "fila": head=`<path d="M26 40 L44 22 Q52 16 66 22 L70 34 Q50 40 26 42 Z" fill="${hc}"/><path d="M62 22 Q72 20 70 30" fill="${hc}"/><rect x="27" y="39" width="42" height="4" fill="${hc2}"/>`; break;
+    case "redcap": head=`<path d="M31 40 Q31 18 50 18 Q69 18 69 40 Z" fill="${hc}"/><rect x="31" y="37" width="38" height="5" fill="${hc2}"/><path d="M50 18 L54 8 L57 18 Z" fill="${hc2}"/>`; break;
+    case "flared": head=`<path d="M30 30 L70 30 L82 14 Q50 6 18 14 Z" fill="${hc}"/><path d="M30 30 Q50 36 70 30" fill="none" stroke="${hc2}" stroke-width="2.5"/>`; break;
+    case "headwrap": head=`<path d="M26 40 Q22 14 50 12 Q78 14 74 40 Z" fill="${hc}"/><path d="M28 24 Q50 16 72 24" fill="none" stroke="${hc2}" stroke-width="5" stroke-linecap="round"/><path d="M30 32 Q50 26 70 32" fill="none" stroke="${hc2}" stroke-width="3.5" stroke-linecap="round"/>`; break;
+    case "shawl": head=`<path d="M22 62 Q18 14 50 14 Q82 14 78 62 L72 62 Q74 30 50 26 Q26 30 28 62 Z" fill="${hc}"/><path d="M22 62 Q18 14 50 14 Q82 14 78 62" fill="none" stroke="${hc2}" stroke-width="3"/>`; break;
+    default: head=`<path d="M24 60 Q20 14 50 14 Q80 14 76 60 L69 60 Q71 30 50 26 Q29 30 31 60 Z" fill="${hc}"/><path d="M31 60 Q31 40 33 32" stroke="${hc2}" stroke-width="2" fill="none"/>`;
+  }
+  const necklace=k.necklace?`<path d="M40 70 Q50 82 60 70" fill="none" stroke="${hc2}" stroke-width="3"/><circle cx="44" cy="74" r="1.8" fill="${g2}"/><circle cx="50" cy="77" r="2" fill="${hc2}"/><circle cx="56" cy="74" r="1.8" fill="${g2}"/>`:"";
+  const earrings=k.earrings?`<circle cx="28" cy="53" r="3.2" fill="none" stroke="${hc2}" stroke-width="2"/><circle cx="72" cy="53" r="3.2" fill="none" stroke="${hc2}" stroke-width="2"/>`:"";
+  const wave=k.wave?`<g><path d="M84 108 Q92 92 86 80" stroke="${g}" stroke-width="9" fill="none" stroke-linecap="round"/><circle cx="86" cy="76" r="6.5" fill="${skin}"/></g>`:"";
+  return `<svg viewBox="0 0 100 118" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+    <path d="M10 116 Q12 78 50 74 Q88 78 90 116 Z" fill="${g}"/><path d="M50 74 L44 90 L50 100 L56 90 Z" fill="${g2}"/>
+    <path d="M10 116 Q12 78 50 74 Q88 78 90 116" fill="none" stroke="${g2}" stroke-width="3" opacity=".5"/>
+    ${wave}<rect x="45" y="58" width="10" height="12" fill="${skin}"/>
+    <circle cx="29" cy="46" r="4" fill="${skin}"/><circle cx="71" cy="46" r="4" fill="${skin}"/>
+    <circle cx="50" cy="44" r="22" fill="${skin}"/>${necklace}${earrings}
+    <ellipse cx="42" cy="45" rx="2.1" ry="2.6" fill="#2a1a10"/><ellipse cx="58" cy="45" rx="2.1" ry="2.6" fill="#2a1a10"/>
+    <path d="M39 40 Q42 38 45 40" stroke="#2a1a10" stroke-width="1.4" fill="none"/><path d="M55 40 Q58 38 61 40" stroke="#2a1a10" stroke-width="1.4" fill="none"/>
+    <path d="M50 46 L48 51 Q50 52 52 51" stroke="#2a1a10" stroke-width="1.1" fill="none"/>
+    <path d="M43 53 Q50 59 57 53" stroke="#2a1a10" stroke-width="2" fill="none" stroke-linecap="round"/>${head}</svg>`;
+}
+
+/* ---------- Tembo the elephant mascot ---------- */
+function elephant(){return `<svg viewBox="0 0 240 210" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+  <defs><linearGradient id="gF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cbe7fa"/><stop offset="1" stop-color="#a8d4f0"/></linearGradient></defs>
+  <g stroke="#15242f" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+   <path d="M86 80 C 50 48 18 62 18 98 C 18 128 48 140 78 122 C 88 116 92 94 86 80 Z" fill="#bfe0f5"/>
+   <path d="M154 80 C 190 48 222 62 222 98 C 222 128 192 140 162 122 C 152 116 148 94 154 80 Z" fill="#bfe0f5"/>
+   <path d="M120 34 C 76 34 56 74 56 116 C 56 164 86 190 120 190 C 154 190 184 164 184 116 C 184 74 164 34 120 34 Z" fill="#bfe0f5"/>
+  </g>
+  <path d="M80 88 C 56 68 34 78 34 100 C 34 118 52 126 70 116 Z" fill="#e6f3fc"/>
+  <path d="M160 88 C 184 68 206 78 206 100 C 206 118 188 126 170 116 Z" fill="#e6f3fc"/>
+  <ellipse cx="84" cy="128" rx="13" ry="8" fill="#f3a9bd"/><ellipse cx="156" cy="128" rx="13" ry="8" fill="#f3a9bd"/>
+  <circle cx="101" cy="108" r="8" fill="#15242f"/><circle cx="104" cy="105" r="2.6" fill="#fff"/>
+  <path d="M131 111 Q139 119 147 111" fill="none" stroke="#15242f" stroke-width="5" stroke-linecap="round"/>
+  <g stroke="#ffd94a" stroke-width="2.4" stroke-linecap="round"><path d="M150 97 l4 4 M154 97 l-4 4"/></g>
+  <path d="M107 142 Q101 162 107 176 Q113 181 116 173 Q111 156 117 146 Z" fill="#f7fbff" stroke="#15242f" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M133 142 Q139 162 133 176 Q127 181 124 173 Q129 156 123 146 Z" fill="#f7fbff" stroke="#15242f" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M120 134 C 122 162 110 182 128 189 C 148 197 159 180 156 160" fill="none" stroke="#15242f" stroke-width="26" stroke-linecap="round"/>
+  <path d="M120 134 C 122 162 110 182 128 189 C 148 197 159 180 156 160" fill="none" stroke="#bfe0f5" stroke-width="15" stroke-linecap="round"/></svg>`;}
+
+/* full-body Tembo */
+function elephantFull(){return `<svg viewBox="0 0 240 250" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+  <defs><linearGradient id="hF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cbe7fa"/><stop offset="1" stop-color="#a8d4f0"/></linearGradient></defs>
+  <g stroke="#15242f" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+   <path d="M86 96 C 50 64 18 78 18 114 C 18 144 48 156 78 138 C 88 132 92 110 86 96 Z" fill="#bfe0f5"/>
+   <path d="M154 96 C 190 64 222 78 222 114 C 222 144 192 156 162 138 C 152 132 148 110 154 96 Z" fill="#bfe0f5"/>
+   <ellipse cx="94" cy="212" rx="22" ry="20" fill="#bfe0f5"/><ellipse cx="146" cy="212" rx="22" ry="20" fill="#bfe0f5"/>
+   <path d="M120 42 C 74 42 54 82 54 128 C 54 186 84 216 120 216 C 156 216 186 186 186 128 C 186 82 166 42 120 42 Z" fill="#bfe0f5"/>
+  </g>
+  <path d="M80 104 C 56 84 34 94 34 116 C 34 134 52 142 70 132 Z" fill="#e6f3fc"/>
+  <path d="M160 104 C 184 84 206 94 206 116 C 206 134 188 142 170 132 Z" fill="#e6f3fc"/>
+  <g stroke="#15242f" stroke-width="3" stroke-linecap="round"><path d="M84 224 v8 M94 226 v8 M104 224 v8"/><path d="M136 224 v8 M146 226 v8 M156 224 v8"/></g>
+  <ellipse cx="84" cy="142" rx="13" ry="8" fill="#f3a9bd"/><ellipse cx="156" cy="142" rx="13" ry="8" fill="#f3a9bd"/>
+  <circle cx="101" cy="122" r="8" fill="#15242f"/><circle cx="104" cy="119" r="2.6" fill="#fff"/>
+  <path d="M131 125 Q139 133 147 125" fill="none" stroke="#15242f" stroke-width="5" stroke-linecap="round"/>
+  <g stroke="#ffd94a" stroke-width="2.4" stroke-linecap="round"><path d="M150 111 l4 4 M154 111 l-4 4"/></g>
+  <path d="M106 158 Q100 178 106 192 Q112 197 115 189 Q110 172 116 162 Z" fill="#f7fbff" stroke="#15242f" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M134 158 Q140 178 134 192 Q128 197 125 189 Q130 172 124 162 Z" fill="#f7fbff" stroke="#15242f" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M120 150 C 122 178 110 198 128 205 C 148 213 159 196 156 176" fill="none" stroke="#15242f" stroke-width="26" stroke-linecap="round"/>
+  <path d="M120 150 C 122 178 110 198 128 205 C 148 213 159 196 156 176" fill="none" stroke="#bfe0f5" stroke-width="15" stroke-linecap="round"/></svg>`;}
+
+/* ---------- first-run demo (Tembo walkthrough) ---------- */
+const OB=[
+ {brand:true,title:"Habari! I'm Tembo 🐘",text:"Your guide to Afrology. Let me show you how it works in 20 seconds."},
+ {title:"Learn 10 African languages",text:"From real speakers, one bite-size lesson at a time. On the Learn path, tap the glowing ★ START to begin."},
+ {title:"Earn rewards every lesson",text:"Finish a lesson and you'll collect 💧 water, 🌱 seeds, or a rare 🏡 estate."},
+ {title:"Grow your garden 🌻",text:"Spend water and seeds in the Garden tab to plant and grow flowers until they bloom."},
+ {title:"…but don't disappear! 🥀",text:"If you stop practising, your garden wilts. Keep your daily streak to keep it thriving."},
+ {title:"Ready to start?",text:"Let's pick your first language and plant your very first seed.",last:true}
+];
+let obIdx=0;
+function showOnboard(i){obIdx=i;const s=OB[i];
+  $("obEle").innerHTML=elephantFull();animate($("obEle"),'anim-pop');animate($("obTitle"),'anim-slide');
+  $("obBrand").innerHTML=s.brand?'Afr<span>ology</span>':'';$("obBrand").style.display=s.brand?'':'none';
+  $("obTitle").textContent=s.title;$("obText").textContent=s.text;
+  let dots='';OB.forEach((_,j)=>dots+=`<i class="${j===i?'on':''}"></i>`);$("obDots").innerHTML=dots;
+  const btns=$("obBtns");btns.innerHTML='';
+  const mk=(cls,txt,fn)=>{const b=document.createElement('button');b.className='btn '+cls+' btn-wide';b.textContent=txt;b.onclick=fn;btns.appendChild(b);};
+  if(s.last)mk('btn-primary',"Let's go! 🐘",finishOnboard); else mk('btn-primary','Next ▸',()=>showOnboard(i+1));
+  if(i>0)mk('btn-ghost','◂ Back',()=>showOnboard(i-1));
+  $("obSkip").style.display=s.last?'none':'';
+  ["langpicker","session","end"].forEach(x=>$(x).classList.add("hidden"));$("bottomnav").classList.add("hidden");$("tabs").classList.add("hidden");
+  $("onboard").classList.remove('hidden');
+}
+function finishOnboard(){state.seenIntro=true;saveState();$("onboard").classList.add('hidden');if(!state.currentLang)showLangPicker(true);else showTab("learn");}
+
+/* ---------- navigation ---------- */
+function hideOverlays(){["langpicker","session","end","leaderboard","recorder"].forEach(s=>$(s).classList.add("hidden"));$("bottomnav").classList.remove("hidden");$("tabs").classList.remove("hidden");}
+function showTab(name){
+  if((name==="learn"||name==="practice")&&!state.currentLang){showLangPicker(true);return;}
+  hideOverlays();
+  ["learn","garden","chat","practice","profile"].forEach(t=>$(t).classList.toggle("hidden",t!==name));
+  document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));
+  if(name==="learn")renderLearn(); else if(name==="garden")renderGarden(); else if(name==="chat")renderChat(); else if(name==="practice")renderPractice(); else renderProfile();
+  animate($(name),'anim-fade');
+}
+function showOverlay(id){["langpicker","session","end","leaderboard","recorder"].forEach(s=>$(s).classList.toggle("hidden",s!==id));$("onboard").classList.add("hidden");$("bottomnav").classList.add("hidden");$("tabs").classList.add("hidden");animate($(id),'anim-slide');}
+
+/* ---------- language picker ---------- */
+function showLangPicker(first){
+  const g=$("langGrid");g.innerHTML="";
+  Object.entries(LANGS).forEach(([key,L])=>{
+    const b=document.createElement("button");b.className="lang-card";b.onclick=()=>{state.currentLang=key;saveState();showTab("learn");};
+    b.innerHTML=`<div class="lc-av">${avatar(L.av)}</div><div class="lc-name">${FLAGS[key]} ${L.name}</div>
+      <div class="lc-native">${L.native}</div><div class="lc-speaker">Learn with ${L.speaker}</div>
+      <div class="lc-model ${MODEL_CLASS[L.model]}">${MODEL_LABEL[L.model]}</div>`;
+    g.appendChild(b);
+  });
+  $("lpBack").style.visibility = first?"hidden":"visible";
+  showOverlay("langpicker");
+}
+
+/* ---------- LEARN tab (path) ---------- */
+function renderLearn(){
+  const key=state.currentLang,L=LANGS[key],unl=unlocked(key);
+  const plants=state.garden.plots.filter(p=>p.planted&&!p.wilted).length;
+  const off=[0,34,0,-34,0,30,0,-30];
+  let nodes="";
+  L.units.forEach((u,i)=>{
+    const done=i<unl-1,current=i===unl-1,locked=i>=unl;
+    const cls=done?"done":current?"current":"locked";
+    const side=(off[i%off.length]>0)?"leftside":"";
+    const guide=current?`<div class="path-guide ${side}">${avatar(L.av)}</div>`:"";
+    const tip=locked?`<div class="locktip"><b>🔒 ${u.icon} ${u.title}</b><br>${unitDesc(u)}</div>`:"";
+    const onclick=locked?`onclick="peekLock(this)"`:`onclick="startUnit('${key}',${i})"`;
+    const badge=done?`<span class="tile-badge">✓</span>`:"";
+    const lockmark=locked?`<span class="tile-lock">🔒</span>`:"";
+    const pill=current?`<div class="begin-pill">▶ Begin</div>`:"";
+    nodes+=`<div class="trail-step ${current?"cur":""}" style="transform:translateX(${off[i%off.length]}px)">${tip}<button class="tile ${cls}" ${onclick}><span class="tile-ic">${u.icon}</span>${badge}${lockmark}</button><div class="tile-label">${u.title}</div>${pill}${guide}</div>`;
+  });
+  const uiCur=Math.min(unl,L.units.length),bannerUnit=L.units[Math.min(unl-1,L.units.length-1)];
+  $("learn").innerHTML=`
+    <div class="lbar">
+      <button class="flagbtn" onclick="showLangPicker(false)">${FLAGS[key]}</button>
+      <div class="chip">🔥 ${state.streak.count}</div>
+      <div class="chip">⭐ ${state.totalXP}</div>
+      <div class="chip">🌱 ${plants}</div>
+    </div>
+    <div class="unit-banner"><div class="ub-sub">${L.name} · Unit ${uiCur} of ${L.units.length}</div>
+      <div class="ub-title">${bannerUnit.icon} ${bannerUnit.title}</div>
+      <div class="ub-desc">${L.tip}</div></div>
+    <div class="coach"><div class="coach-av">${elephant()}</div><div class="coach-bubble">Tap the glowing <b>★ START</b> to begin. Finish a lesson to earn <b>💧 water</b> for your garden!</div></div>
+    <div class="path">${nodes}</div>`;
+}
+function unitDesc(u){
+  const t=(u.title||"").toLowerCase();
+  if(t.includes("greet")) return "First, you'll learn to say hello, thank you, and goodbye.";
+  if(t.includes("family")||t.includes("people")) return "Next, you'll introduce your family and describe people.";
+  if(t.includes("number")) return "After that, you'll count and talk about numbers.";
+  if(t.includes("food")||t.includes("market")) return "Then, you'll order food and shop at the market.";
+  if(t.includes("around")||t.includes("getting")) return "Soon, you'll ask for directions and get around town.";
+  if(t.includes("action")) return "Later, you'll use everyday verbs like go, eat, and want.";
+  if(t.includes("describ")) return "Meanwhile, you'll describe things — big, small, hot, and cold.";
+  if(t.includes("script")||t.includes("sound")||t.includes("tone")||t.includes("fidel")||t.includes("click")||t.includes("fula")) return "Finally, you'll master the tricky sounds and writing system.";
+  return "Next, you'll unlock a fresh set of words and phrases here.";
+}
+function peekLock(el){
+  try{const row=el.closest(".trail-step");
+    document.querySelectorAll(".trail-step.peek").forEach(r=>{if(r!==row)r.classList.remove("peek");});
+    row.classList.toggle("peek");
+  }catch(e){}
+}
+
+/* ---------- pool ---------- */
+/* ---------- Tembo teaching pictures (bubbly, shown on first try) ---------- */
+function conceptEnglish(q){
+  if(!q)return "";
+  if(q.mode==='type')return q.answer;
+  if(q.mode==='speak')return q.en;
+  if(q.mode==='build')return q.prompt;
+  if(q.mode==='listen'){const p=(q.note||"").split("·");return (p[1]||"").trim();}
+  if(q.mode==='mc'){if(/^Translate to/.test(q.type))return q.prompt;if(/mean/.test(q.type))return q.answer;}
+  return "";
+}
+function mapConcept(en){en=(en||"").toLowerCase();const has=(...w)=>w.some(x=>en.includes(x));
+  if(/\b(one|two|three|four|five|six|seven|eight|nine|ten)\b/.test(en))return 'num';
+  if(has('hello','good morning','good afternoon','greeting','peace'))return 'wave';
+  if(has('goodbye','see you'))return 'wave';
+  if(has('thank'))return 'love';
+  if(has('water'))return 'water';
+  if(has('food','eat'))return 'food';
+  if(has('drink'))return 'drink';
+  if(has('tea'))return 'tea';
+  if(has('milk'))return 'milk';
+  if(has('bread'))return 'bread';
+  if(has('house','home'))return 'house';
+  if(has('school'))return 'school';
+  if(has('car','vehicle'))return 'car';
+  if(has('road'))return 'road';
+  if(has('book','read'))return 'book';
+  if(has('sleep'))return 'sleep';
+  if(has('money'))return 'money';
+  if(has('market'))return 'market';
+  if(has('sun','hot'))return 'sun';
+  if(has('cold'))return 'cold';
+  if(has('love'))return 'love';
+  if(has('mother','father','family','child','sister','brother','baby','woman','man','people'))return 'family';
+  if(has('friend'))return 'friend';
+  if(has('big'))return 'big';
+  if(has('small'))return 'small';
+  if(has('yes'))return 'yes';
+  if(en.trim()==='no')return 'no';
+  return null;
+}
+function propSVG(c){
+  const B='#6fd0f2',BD='#2f93cf',G='#efc35a',R='#e0508a',W='#eaf6ff',GR='#7bc86c',BR='#c98a5a';
+  const S=inner=>`<svg viewBox="0 0 100 100" style="width:100%;height:100%">${inner}</svg>`;
+  switch(c){
+    case 'water':return S(`<path d="M50 12 C70 42 78 56 78 68 A28 28 0 1 1 22 68 C22 56 30 42 50 12 Z" fill="${B}" stroke="${BD}" stroke-width="4"/><ellipse cx="40" cy="64" rx="7" ry="10" fill="${W}" opacity=".6"/>`);
+    case 'food':return S(`<ellipse cx="50" cy="60" rx="34" ry="20" fill="${W}" stroke="${BD}" stroke-width="4"/><path d="M22 58 a28 14 0 0 0 56 0" fill="${G}"/><circle cx="42" cy="52" r="5" fill="${R}"/><circle cx="58" cy="54" r="5" fill="${GR}"/>`);
+    case 'drink':case 'tea':return S(`<path d="M30 34 h40 l-4 44 a8 8 0 0 1 -8 7 h-16 a8 8 0 0 1 -8 -7 Z" fill="${W}" stroke="${BD}" stroke-width="4"/><path d="M70 44 h8 a8 8 0 0 1 0 16 h-6" fill="none" stroke="${BD}" stroke-width="4"/><path d="M44 20 q6 6 0 12 M56 20 q6 6 0 12" stroke="${W}" stroke-width="3" fill="none" opacity=".7"/>`);
+    case 'milk':return S(`<path d="M40 20 h20 v10 l6 12 v40 a6 6 0 0 1 -6 6 h-20 a6 6 0 0 1 -6 -6 v-40 l6 -12 Z" fill="${W}" stroke="${BD}" stroke-width="4"/><rect x="36" y="56" width="28" height="28" fill="${B}" opacity=".3"/>`);
+    case 'bread':return S(`<path d="M20 60 q0 -28 30 -28 q30 0 30 28 a10 10 0 0 1 -10 10 h-40 a10 10 0 0 1 -10 -10 Z" fill="${G}" stroke="${BR}" stroke-width="4"/><path d="M38 46 v16 M50 44 v18 M62 46 v16" stroke="${BR}" stroke-width="3"/>`);
+    case 'house':case 'school':return S(`<path d="M50 20 L84 48 H16 Z" fill="${R}" stroke="${BD}" stroke-width="4"/><rect x="26" y="46" width="48" height="34" fill="${B}" stroke="${BD}" stroke-width="4"/><rect x="44" y="58" width="12" height="22" fill="${W}"/>`);
+    case 'car':return S(`<path d="M14 64 q4 -18 16 -18 h40 q12 0 16 18 v6 h-72 Z" fill="${B}" stroke="${BD}" stroke-width="4"/><rect x="34" y="36" width="28" height="14" rx="4" fill="${W}" stroke="${BD}" stroke-width="3"/><circle cx="32" cy="72" r="8" fill="#333" stroke="${BD}" stroke-width="3"/><circle cx="68" cy="72" r="8" fill="#333" stroke="${BD}" stroke-width="3"/>`);
+    case 'road':return S(`<path d="M36 84 L48 20 h4 L64 84 Z" fill="#556" stroke="${BD}" stroke-width="3"/><path d="M50 30 v8 M50 48 v8 M50 66 v8" stroke="${G}" stroke-width="3"/>`);
+    case 'book':return S(`<path d="M50 30 q-16 -8 -30 -4 v42 q14 -4 30 4 Z" fill="${B}" stroke="${BD}" stroke-width="4"/><path d="M50 30 q16 -8 30 -4 v42 q-14 -4 -30 4 Z" fill="${W}" stroke="${BD}" stroke-width="4"/>`);
+    case 'sleep':return S(`<path d="M66 22 a26 26 0 1 0 14 42 A30 30 0 0 1 66 22 Z" fill="${G}" stroke="${BD}" stroke-width="4"/><text x="26" y="42" font-size="18" fill="${W}" font-weight="bold">z</text><text x="14" y="62" font-size="24" fill="${W}" font-weight="bold">Z</text>`);
+    case 'money':return S(`<circle cx="50" cy="52" r="30" fill="${G}" stroke="#b8894a" stroke-width="4"/><text x="50" y="63" font-size="30" text-anchor="middle" fill="#8a5a1a" font-weight="bold">$</text>`);
+    case 'market':return S(`<path d="M18 42 h64 l-6 -16 h-52 Z" fill="${R}" stroke="${BD}" stroke-width="4"/><rect x="22" y="42" width="56" height="38" fill="${W}" stroke="${BD}" stroke-width="4"/><circle cx="38" cy="60" r="6" fill="${G}"/><circle cx="58" cy="60" r="6" fill="${GR}"/>`);
+    case 'sun':return S(`<circle cx="50" cy="50" r="20" fill="${G}" stroke="#b8894a" stroke-width="3"/><g stroke="${G}" stroke-width="5" stroke-linecap="round"><path d="M50 12 v10 M50 78 v10 M12 50 h10 M78 50 h10 M24 24 l7 7 M69 69 l7 7 M76 24 l-7 7 M31 69 l-7 7"/></g>`);
+    case 'cold':return S(`<g stroke="${B}" stroke-width="5" stroke-linecap="round"><path d="M50 16 v68 M22 33 l56 34 M78 33 l-56 34"/></g>`);
+    case 'love':return S(`<path d="M50 80 C10 52 20 22 50 40 C80 22 90 52 50 80 Z" fill="${R}" stroke="${BD}" stroke-width="4"/>`);
+    case 'family':return S(`<circle cx="38" cy="46" r="16" fill="${B}" stroke="${BD}" stroke-width="4"/><circle cx="66" cy="54" r="11" fill="${G}" stroke="${BD}" stroke-width="4"/>`);
+    case 'friend':return S(`<circle cx="38" cy="50" r="16" fill="${B}" stroke="${BD}" stroke-width="4"/><circle cx="64" cy="50" r="16" fill="${G}" stroke="${BD}" stroke-width="4"/>`);
+    case 'wave':return S(`<circle cx="50" cy="52" r="30" fill="${G}" stroke="#b8894a" stroke-width="4"/><path d="M38 52 v-14 a4 4 0 0 1 8 0 v10 M46 48 v-18 a4 4 0 0 1 8 0 v18 M54 50 v-14 a4 4 0 0 1 8 0 v16 q0 16 -14 16 q-12 0 -14 -12" fill="${W}" stroke="${BD}" stroke-width="3" stroke-linejoin="round"/>`);
+    case 'big':return S(`<circle cx="56" cy="52" r="30" fill="${B}" stroke="${BD}" stroke-width="4"/><circle cx="24" cy="72" r="9" fill="${B}" opacity=".5"/>`);
+    case 'small':return S(`<circle cx="72" cy="40" r="26" fill="${B}" opacity=".22"/><circle cx="48" cy="58" r="12" fill="${B}" stroke="${BD}" stroke-width="4"/>`);
+    case 'yes':return S(`<circle cx="50" cy="50" r="30" fill="${GR}" stroke="${BD}" stroke-width="4"/><path d="M36 52 l10 10 l20 -24" fill="none" stroke="${W}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`);
+    case 'no':return S(`<circle cx="50" cy="50" r="30" fill="${R}" stroke="${BD}" stroke-width="4"/><path d="M38 38 l24 24 M62 38 l-24 24" stroke="${W}" stroke-width="6" stroke-linecap="round"/>`);
+    default:return null;
+  }
+}
+function tScene(con,en){
+  let prop;
+  if(con==='num'){const n={one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10}[(en||"").toLowerCase()]||"";prop=`<svg viewBox="0 0 100 100" style="width:100%;height:100%"><circle cx="50" cy="50" r="34" fill="#efc35a" stroke="#b8894a" stroke-width="4"/><text x="50" y="67" font-size="46" text-anchor="middle" fill="#5a3a10" font-weight="bold">${n}</text></svg>`;}
+  else prop=propSVG(con);
+  if(!prop)return "";
+  return `<div class="scene-in"><div class="scene-ele">${elephant()}</div><div class="scene-prop">${prop}</div></div>`;
+}
+
+/* ---------- exercise generation (multi-format) ---------- */
+function normE(s){return (s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9\s]/g,"").replace(/\s+/g," ").trim();}
+function normT(s){return (s||"").toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,"").replace(/\s+/g," ").trim();}
+function buildSentenceQ(t,e,vocab){
+  const words=t.split(/\s+/).filter(Boolean);
+  const distract=shuffle(vocab.map(v=>v.t.split(/\s+/)[0]).filter(w=>w&&words.indexOf(w)<0)).slice(0,2);
+  return {mode:'build',type:"Build the phrase",prompt:e,pron:"",answer:t,tokens:shuffle([...words,...distract]),note:t,clip:null,ttsText:t};
+}
+function buildPool(vocab,special,L,sentences){
+  const items=[];
+  const dT=(a,n)=>{const s=[...new Set(vocab.map(x=>x.t).filter(x=>x!==a))];return shuffle(s).slice(0,n);};
+  const dE=(a,n)=>{const s=[...new Set(vocab.map(x=>x.e).filter(x=>x!==a))];return shuffle(s).slice(0,n);};
+  vocab.forEach(v=>{const clip=slugify(v.p||v.e);
+    items.push({mode:'mc',gen:()=>({mode:'mc',type:"Translate to "+L.name,prompt:v.e,pron:"",answer:v.t,choices:shuffle([...new Set([v.t,...dT(v.t,3)])]),note:v.t+"  ·  "+v.p,clip,ttsText:v.t})});
+    items.push({mode:'mc',gen:()=>({mode:'mc',type:"What does this mean?",prompt:v.t,pron:v.p,answer:v.e,choices:shuffle([...new Set([v.e,...dE(v.e,3)])]),note:v.e,clip,ttsText:v.t})});
+    items.push({mode:'type',gen:()=>({mode:'type',type:"Type it in English",prompt:v.t,pron:v.p,answer:v.e,note:v.t+"  ·  "+v.p,clip,ttsText:v.t})});
+    if(L.model!=='script') items.push({mode:'listen',gen:()=>({mode:'listen',type:"What did you hear?",prompt:"",pron:"",answer:v.t,choices:shuffle([...new Set([v.t,...dT(v.t,3)])]),note:v.t+"  ·  "+v.e,clip,ttsText:v.t})});
+    items.push({mode:'speak',gen:()=>({mode:'speak',type:"Say it out loud",prompt:v.t,pron:v.p,answer:v.t,en:v.e,note:v.t+"  ·  "+v.p,clip,ttsText:v.t})});
+    if(/\s/.test(v.t)) items.push({mode:'build',gen:()=>buildSentenceQ(v.t,v.e,vocab)});
+  });
+  (sentences||[]).forEach(s=>{
+    items.push({mode:'build',gen:()=>buildSentenceQ(s.t,s.e,vocab)});
+    items.push({mode:'type',gen:()=>({mode:'type',type:"Type it in English",prompt:s.t,pron:s.p||"",answer:s.e,note:s.t,clip:null,ttsText:s.t})});
+  });
+  if(vocab.length>=4){for(let i=0;i<2;i++)items.push({mode:'match',gen:()=>({mode:'match',type:"Match the pairs",pairs:shuffle(vocab).slice(0,4).map(v=>({t:v.t,e:v.e}))})});}
+  (special||[]).forEach(s=>items.push({mode:'mc',gen:()=>({mode:'mc',type:"Language & culture",prompt:s.q,pron:"",answer:s.a,choices:shuffle(s.c.slice()),note:s.n,clip:null,ttsText:null})}));
+  return items;
+}
+function composeLesson(items,cap){
+  const groups={};items.forEach(it=>{(groups[it.mode]=groups[it.mode]||[]).push(it.gen);});
+  Object.keys(groups).forEach(k=>groups[k]=shuffle(groups[k]));
+  const order=['mc','listen','type','build','match','speak'];
+  const out=[];let added=true;
+  while(out.length<cap&&added){added=false;for(const m of order){if(groups[m]&&groups[m].length){out.push(groups[m].shift());added=true;if(out.length>=cap)break;}}}
+  return out;
+}
+const UNIT_OBJ={greet:"say hello, thank you and goodbye",family:"talk about family and people",number:"count and use numbers",food:"order food and shop",around:"ask directions and get around",action:"use everyday verbs",describ:"describe things",script:"read the writing system",sound:"master the special sounds",tone:"handle tones",click:"handle the clicks",fidel:"read the Fidel script",fula:"understand Fula basics",tifinagh:"know the Tifinagh script","ge'ez":"read the Ge'ez script"};
+function unitObjective(u){const t=(u.title||"").toLowerCase();for(const k in UNIT_OBJ){if(t.includes(k))return "By the end you can "+UNIT_OBJ[k]+".";}return "Learn a fresh set of words and phrases.";}
+
+/* ---------- lesson ---------- */
+function startUnit(key,unitIdx,isRetry){
+  cur=LANGS[key];curKey=key;curUnit=unitIdx;isPractice=false;firstTry=!isRetry;
+  const u=cur.units[unitIdx];
+  const items=buildPool(u.vocab,u.special,cur,(unitIdx>=1?(cur.sent||[]):[]));
+  beginLesson(composeLesson(items,LESSON_CAP),u.icon+" "+u.title,u);
+}
+function startPractice(){
+  const key=state.currentLang;cur=LANGS[key];curKey=key;isPractice=true;firstTry=true;
+  const unl=unlocked(key);let vocab=[];
+  cur.units.forEach((u,i)=>{if(i<unl)vocab=vocab.concat(u.vocab);});
+  const items=buildPool(vocab,[],cur,cur.sent||[]);
+  beginLesson(composeLesson(items,LESSON_CAP),"💪 Mixed practice",{title:"Mixed practice",icon:"💪"});
+}
+function beginLesson(gens,label,unit){
+  pool=gens;idx=0;hearts=MAX_HEARTS;xp=0;correct=0;hintsLeft=3;
+  cultureShown=false;cultureAt=pool.length>=6?Math.floor(pool.length/2):-1;shownConcepts=new Set();
+  showOverlay("session");
+  $("cultureView").classList.add("hidden");$("quizView").classList.remove("hidden");
+  const obj=unit?unitObjective(unit):"";
+  $("speakerStrip").innerHTML=`<div class="ss-av">${avatar(cur.av)}</div><div class="ss-txt"><b>${cur.speaker}</b> · ${label}<br><span>🎯 ${obj}</span></div>`;
+  renderQ();
+}
+let buildAssembled=[],matchState=null,firstTry=true,shownConcepts=new Set();
+function renderQ(){
+  answered=false;selected=null;buildAssembled=[];matchState=null;
+  curQ=pool[idx]();
+  $("pfill").style.width=(idx/pool.length*100)+"%";drawHearts();
+  ["choices","typeWrap","buildWrap","matchWrap","speakWrap"].forEach(id=>$(id).classList.add("hidden"));
+  // Tembo teaching picture — first try only, each concept once
+  const sc=$("sceneCard");const con=(firstTry&&['mc','type','build','speak'].indexOf(curQ.mode)>=0)?mapConcept(conceptEnglish(curQ)):null;
+  if(con&&!shownConcepts.has(con)){shownConcepts.add(con);const html=tScene(con,conceptEnglish(curQ));if(html){sc.innerHTML=html;sc.classList.remove("hidden");animate(sc,'anim-pop');}else{sc.classList.add("hidden");sc.innerHTML="";}}
+  else{sc.classList.add("hidden");sc.innerHTML="";}
+  $("fb").classList.add("hidden");$("foot").classList.remove("good","bad");$("mistakePop").classList.add("hidden");
+  currentHinted=false;$("hintText").textContent="";
+  $("qtype").textContent=curQ.type;
+  const hintable=(curQ.mode==='mc'||curQ.mode==='type'||curQ.mode==='listen');
+  const hb=$("hintBtn").parentElement;if(hb)hb.style.display=hintable?"":"none";updateHintLabel();
+  const cb=$("checkBtn");cb.textContent="Check";cb.className="btn btn-grey btn-wide";cb.disabled=true;cb.onclick=null;cb.style.display="";
+  const spk=curQ.clip?` <span class="speak" onclick="playClip(curQ.clip,curQ.ttsText)">🔊</span>`:"";
+  if(curQ.mode==='mc'){$("qprompt").innerHTML=curQ.prompt+spk;$("qpron").textContent=curQ.pron||"";renderChoicesMode();cb.onclick=checkMC;}
+  else if(curQ.mode==='listen'){$("qprompt").innerHTML=`🔊 <span class="speak" onclick="playClip(curQ.clip,curQ.ttsText)">Tap to hear again</span>`;$("qpron").textContent="";renderChoicesMode();cb.onclick=checkMC;if(curQ.clip)playClip(curQ.clip,curQ.ttsText);}
+  else if(curQ.mode==='type'){$("qprompt").innerHTML=curQ.prompt+spk;$("qpron").textContent=curQ.pron||"";$("typeWrap").classList.remove("hidden");const ti=$("typeInput");ti.value="";ti.disabled=false;ti.oninput=()=>{const has=ti.value.trim().length>0;cb.disabled=!has;cb.className="btn "+(has?"btn-gold":"btn-grey")+" btn-wide";};setTimeout(()=>{try{ti.focus();}catch(e){}},30);cb.onclick=checkType;}
+  else if(curQ.mode==='build'){$("qprompt").textContent=curQ.prompt;$("qpron").textContent="";renderBuild();cb.onclick=checkBuild;}
+  else if(curQ.mode==='match'){$("qprompt").textContent="Tap a word, then its match";$("qpron").textContent="";renderMatch();cb.style.display="none";}
+  else if(curQ.mode==='speak'){$("qprompt").innerHTML=`Say: <b>${curQ.prompt}</b>${spk}`;$("qpron").textContent=curQ.pron||"";renderSpeak();cb.style.display="";cb.disabled=false;cb.className="btn btn-primary btn-wide";cb.textContent="Skip ▸";cb.onclick=next;}
+  animate($("qprompt"),'anim-q');
+}
+function renderChoicesMode(){const c=$("choices");c.classList.remove("hidden");c.innerHTML="";curQ.choices.forEach(opt=>{const b=document.createElement("button");b.className="choice";b.textContent=opt;b.onclick=()=>selectChoice(b,opt);c.appendChild(b);});animate(c,'anim-q');}
+function checkMC(){if(answered||selected==null)return;const right=selected===curQ.answer;document.querySelectorAll(".choice").forEach(b=>{b.disabled=true;if(b.textContent===curQ.answer)b.classList.add("good");else if(b.textContent===selected)b.classList.add("bad");});gradeAnswer(right);}
+function checkType(){if(answered)return;const val=$("typeInput").value;if(!val.trim())return;$("typeInput").disabled=true;gradeAnswer(normE(val)===normE(curQ.answer));}
+function renderBuild(){$("buildWrap").classList.remove("hidden");buildAssembled=[];$("buildAnswer").innerHTML="";const bank=$("buildBank");bank.innerHTML="";curQ.tokens.forEach((w,i)=>{const b=document.createElement("button");b.className="tok";b.textContent=w;b.setAttribute("data-i",i);b.onclick=()=>tokPick(b,w,i);bank.appendChild(b);});updateBuildCheck();animate($("buildWrap"),'anim-q');}
+function tokPick(b,w,i){if(answered)return;b.classList.add("used");buildAssembled.push({w,i});renderAssembled();updateBuildCheck();}
+function renderAssembled(){const ans=$("buildAnswer");ans.innerHTML="";buildAssembled.forEach((it,idx)=>{const b=document.createElement("button");b.className="tok";b.textContent=it.w;b.onclick=()=>tokUnpick(idx);ans.appendChild(b);});}
+function tokUnpick(idx){if(answered)return;const it=buildAssembled.splice(idx,1)[0];const bb=$("buildBank").querySelector('[data-i="'+it.i+'"]');if(bb)bb.classList.remove("used");renderAssembled();updateBuildCheck();}
+function updateBuildCheck(){const cb=$("checkBtn");const has=buildAssembled.length>0;cb.disabled=!has;cb.className="btn "+(has?"btn-gold":"btn-grey")+" btn-wide";}
+function checkBuild(){if(answered)return;const built=buildAssembled.map(x=>x.w).join(" ");gradeAnswer(normT(built)===normT(curQ.answer));}
+function renderMatch(){const w=$("matchWrap");w.classList.remove("hidden");w.innerHTML="";const L=shuffle(curQ.pairs.map(p=>p.t)),R=shuffle(curQ.pairs.map(p=>p.e));matchState={sel:null,done:0,map:{}};curQ.pairs.forEach(p=>matchState.map[p.t]=p.e);const cL=document.createElement("div");cL.className="match-col";const cR=document.createElement("div");cR.className="match-col";L.forEach(t=>{const b=document.createElement("button");b.className="match-item";b.textContent=t;b.setAttribute("data-k",t);b.setAttribute("data-side","L");b.onclick=()=>matchTap(b);cL.appendChild(b);});R.forEach(e=>{const b=document.createElement("button");b.className="match-item";b.textContent=e;b.setAttribute("data-k",e);b.setAttribute("data-side","R");b.onclick=()=>matchTap(b);cR.appendChild(b);});w.appendChild(cL);w.appendChild(cR);animate(w,'anim-q');}
+function matchTap(b){if(answered)return;const side=b.getAttribute("data-side");if(!matchState.sel){matchState.sel=b;b.classList.add("sel");return;}if(matchState.sel===b){b.classList.remove("sel");matchState.sel=null;return;}if(matchState.sel.getAttribute("data-side")===side){matchState.sel.classList.remove("sel");matchState.sel=b;b.classList.add("sel");return;}const lEl=side==='L'?b:matchState.sel,rEl=side==='R'?b:matchState.sel;const ok=matchState.map[lEl.getAttribute("data-k")]===rEl.getAttribute("data-k");matchState.sel.classList.remove("sel");matchState.sel=null;if(ok){lEl.classList.add("done");rEl.classList.add("done");matchState.done++;if(matchState.done===curQ.pairs.length)gradeAnswer(true);}else{lEl.classList.add("miss");rEl.classList.add("miss");setTimeout(()=>{lEl.classList.remove("miss");rEl.classList.remove("miss");},350);}}
+function renderSpeak(){$("speakWrap").classList.remove("hidden");$("speakHeard").textContent="🎙️ Tap to try saying it (optional) — or press Continue.";const b=$("speakBtn");if(b)b.classList.remove("live");animate($("speakWrap"),'anim-q');}
+function speakMic(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast("Voice needs Chrome + mic — you can skip");return;}const rec=new SR();rec.lang=cur.ttsLang||"en";rec.interimResults=false;rec.maxAlternatives=1;const b=$("speakBtn");if(b)b.classList.add("live");rec.onresult=e=>{const said=e.results[0][0].transcript;$("speakHeard").textContent="You said: "+said;const ok=normT(said)===normT(curQ.answer)||normT(said).includes(normT(curQ.answer))||normT(curQ.answer).includes(normT(said));gradeSpeak(ok);};rec.onerror=()=>{if(b)b.classList.remove("live");toast("Didn't catch it — try again or skip");};rec.onend=()=>{if(b)b.classList.remove("live");};try{rec.start();}catch(e){toast("Mic needs http://localhost — you can skip");}}
+function gradeSpeak(ok){if(answered)return;answered=true;correct++;xp+=ok?10:5;const foot=$("foot");$("fb").classList.remove("hidden");foot.classList.add("good");$("fbIcon").style.background="var(--good)";$("fbIcon").textContent="🗣️";$("fbTitle").textContent=ok?"Great pronunciation!":"Good effort!";$("fbTitle").style.color="var(--good)";$("fbSub").textContent=curQ.answer+"  ·  "+curQ.en;if(curQ.clip)playClip(curQ.clip,curQ.ttsText);drawHearts();const cb=$("checkBtn");cb.style.display="";cb.className="btn btn-sage btn-wide";cb.textContent=(hearts<=0)?"See results":"Continue";cb.disabled=false;cb.onclick=next;}
+function speakSkip(){if(answered)return;answered=true;const foot=$("foot");$("fb").classList.remove("hidden");$("fbIcon").style.background="var(--muted)";$("fbIcon").textContent="⤼";$("fbTitle").textContent="Skipped";$("fbTitle").style.color="var(--muted)";$("fbSub").textContent=curQ.answer+"  ·  "+curQ.en;const cb=$("checkBtn");cb.style.display="";cb.className="btn btn-primary btn-wide";cb.textContent=(hearts<=0)?"See results":"Continue";cb.disabled=false;cb.onclick=next;}
+function gradeAnswer(right){
+  if(answered)return;answered=true;$("hintBtn").disabled=true;
+  const foot=$("foot");$("fb").classList.remove("hidden");
+  if(right){correct++;xp+=10;foot.classList.add("good");$("fbIcon").style.background="var(--good)";$("fbIcon").textContent="✓";$("fbTitle").textContent=["Nice!","Correct!","Well done!","Kudos!"][Math.floor(Math.random()*4)];$("fbTitle").style.color="var(--good)";$("fbSub").textContent=curQ.note||"";if(curQ.clip)playClip(curQ.clip,curQ.ttsText);}
+  else{hearts--;foot.classList.add("bad");$("fbIcon").style.background="var(--bad)";$("fbIcon").textContent="✗";$("fbTitle").textContent="Answer:";$("fbTitle").style.color="var(--bad)";$("fbSub").textContent=(curQ.answer||"")+"  —  "+(curQ.note||"");$("mpEle").innerHTML=elephantFull();$("mpBubble").innerHTML=`Oops! The answer is <b>${curQ.answer}</b>.<br>${curQ.note||""}`;const mp=$("mistakePop");mp.classList.remove("hidden");animate(mp,'anim-hop');}
+  drawHearts();
+  const cb=$("checkBtn");cb.style.display="";cb.className="btn "+(right?"btn-sage":"btn-primary")+" btn-wide";cb.textContent=(hearts<=0)?"See results":"Continue";cb.disabled=false;cb.onclick=next;
+}
+function updateHintLabel(){$("hintLeft").textContent=hintsLeft+" left";$("hintBtn").disabled=(answered||currentHinted||hintsLeft<=0);}
+function useHint(){
+  if(answered)return;
+  if(!curQ||typeof curQ.answer!=="string"){return;}
+  if(currentHinted){toast("Hint already shown for this word");return;}
+  if(hintsLeft<=0){toast("No hints left this lesson 🐘");return;}
+  hintsLeft--;currentHinted=true;
+  const a=curQ.answer,len=a.replace(/\s/g,'').length;
+  let extra = curQ.pron?(" · sounds like “"+curQ.pron+"”"):"";
+  $("hintText").textContent=`💡 Starts with “${a[0]}” · ${len} letter${len>1?"s":""}${extra}`;
+  animate($("hintText"),'anim-fade');updateHintLabel();
+}
+function drawHearts(){const h=Math.max(hearts,0);$("hearts").textContent="🍃 "+h;}
+function selectChoice(el,opt){if(answered)return;selected=opt;document.querySelectorAll(".choice").forEach(x=>x.classList.remove("sel"));el.classList.add("sel");const cb=$("checkBtn");cb.disabled=false;cb.className="btn btn-gold btn-wide";}
+function check(){
+  if(answered||selected==null)return;answered=true;$("hintBtn").disabled=true;
+  const right=selected===curQ.answer;
+  document.querySelectorAll(".choice").forEach(b=>{b.disabled=true;if(b.textContent===curQ.answer)b.classList.add("good");else if(b.textContent===selected)b.classList.add("bad");});
+  const foot=$("foot"),fb=$("fb");fb.classList.remove("hidden");
+  if(right){correct++;xp+=10;foot.classList.add("good");$("fbIcon").style.background="var(--good)";$("fbIcon").textContent="✓";$("fbTitle").textContent=["Nice!","Correct!","Well done!","Kudos!"][Math.floor(Math.random()*4)];$("fbTitle").style.color="var(--good)";$("fbSub").textContent=curQ.note;if(curQ.clip)playClip(curQ.clip,curQ.ttsText);}
+  else{hearts--;foot.classList.add("bad");$("fbIcon").style.background="var(--bad)";$("fbIcon").textContent="✗";$("fbTitle").textContent="Correct answer:";$("fbTitle").style.color="var(--bad)";$("fbSub").textContent=curQ.answer+"  —  "+curQ.note;
+    $("mpEle").innerHTML=elephantFull();
+    $("mpBubble").innerHTML=`Oops! The answer is <b>${curQ.answer}</b>.<br>${curQ.note}`;
+    const mp=$("mistakePop");mp.classList.remove("hidden");animate(mp,'anim-hop');}
+  drawHearts();
+  const cb=$("checkBtn");cb.className="btn "+(right?"btn-sage":"btn-primary")+" btn-wide";cb.textContent=(hearts<=0)?"See results":"Continue";cb.disabled=false;cb.onclick=next;
+}
+function next(){if(hearts<=0){finish(false);return;}idx++;if(idx>=pool.length){finish(true);return;}if(!cultureShown&&idx===cultureAt){showCulture();return;}renderQ();}
+function showCulture(){cultureShown=true;const p=cur.proverb;$("quizView").classList.add("hidden");$("cultureView").classList.remove("hidden");$("cultAv").innerHTML=avatar(cur.av);$("cultNative").textContent=p.native;$("cultEn").textContent='"'+p.en+'"';$("cultMean").textContent=p.mean;animate($("cultureView"),'anim-fade');animate($("cultAv"),'anim-pop');}
+function afterCulture(){$("cultureView").classList.add("hidden");$("quizView").classList.remove("hidden");renderQ();}
+
+function rollReward(){const r=Math.random();if(r<0.6){state.garden.water++;return{ic:"💧",label:"Water"};}if(r<0.9){state.garden.seeds++;return{ic:"🌱",label:"a Seed"};}state.garden.houses++;return{ic:"🏡",label:"a rare Estate!"};}
+function updateStreak(){const t=new Date().toDateString();if(state.streak.last===t)return;const y=new Date(Date.now()-DAY).toDateString();state.streak.count=(state.streak.last===y?state.streak.count+1:1);state.streak.last=t;}
+
+function finish(done){
+  $("pfill").style.width="100%";
+  const attempted=done?pool.length:idx+1,acc=attempted?Math.round(correct/attempted*100):0;
+  let reward=null,unlockedNext=false;
+  if(done){state.totalXP+=xp;updateStreak();reward=rollReward();state.garden.lastActive=Date.now();
+    if(!isPractice){const need=curUnit+2;if((state.progress[curKey]||1)<need&&curUnit+1<cur.units.length){state.progress[curKey]=need;unlockedNext=true;}}}
+  saveState();
+  showOverlay("end");
+  $("endTitle").textContent=done?(isPractice?"Practice complete!":(unlockedNext?"Unit complete! New unit unlocked 🎉":"Unit complete!")):"Out of leaves!";
+  $("endAv").innerHTML=avatar(cur.av);$("endXp").textContent=xp;$("endAcc").textContent=acc+"%";
+  const rl=$("endReward");
+  if(reward){rl.style.display="";rl.innerHTML=`🎁 You earned <b>${reward.ic} ${reward.label}</b> for your garden!`;}
+  else{rl.style.display="none";}
+  const btns=$("endBtns");btns.innerHTML="";
+  const mk=(cls,txt,fn)=>{const b=document.createElement("button");b.className="btn "+cls+" btn-wide";b.textContent=txt;b.onclick=fn;btns.appendChild(b);};
+  if(done&&!isPractice&&curUnit+1<cur.units.length)mk("btn-sage","Next unit ▸",()=>startUnit(curKey,curUnit+1));
+  if(!done)mk("btn-primary","Try again",()=>isPractice?startPractice():startUnit(curKey,curUnit,true));
+  if(reward)mk("btn-gold","Tend your garden 🌻",()=>showTab("garden"));
+  mk("btn-ghost","Back to learning",()=>showTab(isPractice?"practice":"learn"));
+}
+function quit(){try{speechSynthesis.cancel();}catch(e){}try{if(typeof hideOverlays==="function")hideOverlays();}catch(e){}showTab("learn");}
+
+/* ---------- GARDEN ---------- */
+function applyDecay(){const G=state.garden,now=Date.now(),d=Math.floor((now-(G.lastActive||now))/DAY);
+  if(d>=1){G.plots.forEach(p=>{if(p.planted&&!p.wilted){p.stage-=d;if(p.stage<=0){p.stage=0;p.wilted=true;}}});G.lastActive=(G.lastActive||now)+d*DAY;saveState();}}
+function plantSVG(stage,wilted){
+  if(wilted)return `<ellipse cx="0" cy="2" rx="24" ry="7" fill="#7a5a3a"/><path d="M0 0 Q-6 -14 -12 -18" stroke="#8a6b45" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M0 0 Q6 -12 13 -14" stroke="#8a6b45" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M0 0 Q0 -10 -2 -20" stroke="#9a7b55" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  const h=10+stage*9,sw=3+stage*0.6;
+  let s=`<ellipse cx="0" cy="2" rx="24" ry="7" fill="#6b4a2e"/><ellipse cx="0" cy="1" rx="18" ry="5" fill="#7d5836"/><path d="M0 0 Q -4 ${-h/2} 0 ${-h}" stroke="#3f7a45" stroke-width="${sw}" fill="none" stroke-linecap="round"/>`;
+  if(stage>=1)s+=`<path d="M0 ${-h*0.4} q -14 -4 -18 -14 q 12 0 18 10 z" fill="#4f9a52"/>`;
+  if(stage>=2)s+=`<path d="M0 ${-h*0.6} q 14 -4 18 -14 q -12 0 -18 10 z" fill="#57a85a"/>`;
+  if(stage>=3)s+=`<path d="M0 ${-h*0.8} q -13 -4 -16 -13 q 11 0 16 9 z" fill="#4f9a52"/>`;
+  if(stage>=4){const fy=-h,cols=["#e0508a","#efc35a","#c0532b"];for(let i=0;i<5;i++){const a=i/5*Math.PI*2;s+=`<circle cx="${(Math.cos(a)*7).toFixed(1)}" cy="${(fy+Math.sin(a)*7).toFixed(1)}" r="5" fill="${cols[stage%3]}"/>`;}s+=`<circle cx="0" cy="${fy}" r="4" fill="#efc35a"/>`;}
+  if(stage>=5){const fy=-h+2;s+=`<circle cx="-14" cy="${fy+10}" r="4" fill="#e0508a"/><circle cx="14" cy="${fy+12}" r="4" fill="#7c5ad0"/>`;}
+  return s;
+}
+function gardenScene(){
+  const G=state.garden,planted=G.plots.filter(p=>p.planted);
+  const avg=planted.length?planted.reduce((a,p)=>a+(p.wilted?0:p.stage),0)/planted.length:0;
+  const anyWilt=G.plots.some(p=>p.wilted);
+  const grass=avg>=3?"#7cb85a":avg>=1.5?"#8bbf6a":anyWilt?"#a99f76":"#a9c07f";
+  const sky1=(anyWilt&&avg<1)?"#c9c3a8":"#bfe3f5",sky2=(anyWilt&&avg<1)?"#dcd6bd":"#e9f6ff";
+  const pos=[[70,150],[180,150],[290,150],[70,205],[180,205],[290,205]];
+  let plants="";
+  G.plots.forEach((p,i)=>{const[x,y]=pos[i];let gg=p.planted?plantSVG(p.stage,p.wilted):`<ellipse cx="0" cy="2" rx="22" ry="6" fill="#6b4a2e"/><text x="0" y="-3" text-anchor="middle" font-size="18" fill="#ffffffcc">+</text>`;
+    plants+=`<g transform="translate(${x},${y})">${gg}</g><rect x="${x-30}" y="${y-60}" width="60" height="74" fill="transparent" style="cursor:pointer" onclick="tendPlot(${i})"/>`;});
+  let houses="";const hc=Math.min(G.houses,4);
+  for(let i=0;i<hc;i++){const hx=28+i*28;houses+=`<g transform="translate(${hx},74)"><rect x="-9" y="-2" width="18" height="14" fill="#c98a5a"/><path d="M-11 -2 L0 -12 L11 -2 Z" fill="#a8451f"/><rect x="-3" y="4" width="6" height="8" fill="#5a3a20"/></g>`;}
+  const deco=avg>=3?`<text x="26" y="118" font-size="18">🦋</text><text x="300" y="150" font-size="16">🐝</text>`:"";
+  return `<svg viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">
+    <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky2}"/><stop offset="1" stop-color="${sky1}"/></linearGradient></defs>
+    <rect width="360" height="250" fill="url(#sky)"/><circle cx="316" cy="40" r="20" fill="#ffd85a"/>
+    <path d="M0 118 Q180 96 360 118 L360 250 L0 250 Z" fill="${grass}"/>${houses}${plants}${deco}</svg>`;
+}
+function gardenMood(){const G=state.garden,planted=G.plots.filter(p=>p.planted);const wilt=G.plots.filter(p=>p.wilted).length;
+  if(!planted.length)return{t:"🌱 Plant your first seed!",c:"var(--sage-d)"};
+  if(wilt)return{t:"🥀 Your garden is wilting — do a lesson to earn water!",c:"var(--bad)"};
+  const avg=planted.reduce((a,p)=>a+p.stage,0)/planted.length;
+  if(avg>=3.5)return{t:"🌸 Your garden is thriving!",c:"var(--good)"};
+  if(avg>=1.5)return{t:"🌿 Growing nicely — keep it up!",c:"var(--sage-d)"};
+  return{t:"🌱 Just getting started.",c:"var(--sage-d)"};}
+function renderGarden(){
+  applyDecay();const G=state.garden,mood=gardenMood();
+  $("garden").innerHTML=`
+    <div class="scr-head"><h1>🌻 Your Garden</h1><p>Finish lessons to earn rewards, then grow your garden. Stop, and it wilts…</p></div>
+    <div class="garden-wrap">
+      <div class="inv">
+        <div class="icell"><div class="n">💧 ${G.water}</div><div class="l">Water</div></div>
+        <div class="icell"><div class="n">🌱 ${G.seeds}</div><div class="l">Seeds</div></div>
+        <div class="icell"><div class="n">🏡 ${G.houses}</div><div class="l">Estates</div></div>
+      </div>
+      <div class="mood" style="color:${mood.c}">${mood.t}</div>
+      <div class="garden-scene">${gardenScene()}</div>
+      <div class="garden-help">Tap an empty <b>+</b> plot to plant a seed 🌱. Tap a plant to water it 💧 (each watering grows it a stage, up to full bloom 🌸). Wilted plants can be tapped to clear. Estates 🏡 are rare — placed automatically.</div>
+      <div class="garden-tools">
+        <button class="btn btn-primary btn-wide" onclick="openLeaderboard()">🏆 Garden League</button>
+        <button class="btn btn-ghost" style="white-space:nowrap" onclick="skipDay()">⏭ Skip a day</button>
+      </div>
+      <div style="margin-top:8px"><button class="btn btn-gold btn-wide" onclick="showTab('learn')">Do a lesson for rewards</button></div>
+    </div>`;
+}
+function tendPlot(i){const G=state.garden,p=G.plots[i];
+  if(p.wilted){p.wilted=false;p.planted=false;p.stage=0;toast("Cleared the wilted plant 🧹");}
+  else if(!p.planted){if(G.seeds>0){G.seeds--;p.planted=true;p.stage=0;p.wilted=false;toast("Planted a seed 🌱");}else toast("No seeds — finish a lesson to earn some!");}
+  else{if(p.stage>=5)toast("Already in full bloom 🌸");else if(G.water>0){G.water--;p.stage++;toast("Watered! +1 growth 💧");}else toast("No water — finish a lesson to earn water!");}
+  G.lastActive=Date.now();saveState();renderGarden();
+}
+function skipDay(){state.garden.lastActive-=DAY;saveState();renderGarden();toast("⏭ A day passed… tend your garden!");}
+
+/* ---------- PRACTICE ---------- */
+function renderPractice(){
+  const key=state.currentLang,L=LANGS[key],unl=unlocked(key);
+  const wordCount=L.units.slice(0,unl).reduce((a,u)=>a+u.vocab.length,0);
+  $("practice").innerHTML=`
+    <div class="scr-head"><h1>💪 Practice</h1><p>Mixed review from everything you've unlocked — and it earns garden rewards too.</p></div>
+    <div class="card"><h3>${FLAGS[key]} ${L.name} — Quick review</h3>
+      <p>Draws random questions from your ${unl} unlocked unit${unl>1?"s":""} (${wordCount} words) with ${L.speaker}.</p>
+      <div style="margin-top:14px"><button class="btn btn-primary btn-wide" onclick="startPractice()">Start mixed practice</button></div></div>
+    <div class="card"><h3>Switch language</h3><p>Change which language you're practising.</p>
+      <div style="margin-top:12px"><button class="btn btn-ghost btn-wide" onclick="showLangPicker(false)">${FLAGS[key]} ${L.name} ▸ change</button></div></div>`;
+}
+
+/* ---------- PROFILE ---------- */
+function renderProfile(){
+  const started=Object.keys(state.progress).length||(state.currentLang?1:0);
+  let unitsDone=0;Object.keys(LANGS).forEach(k=>{unitsDone+=Math.max((state.progress[k]||1)-1,0);});
+  const plants=state.garden.plots.filter(p=>p.planted&&!p.wilted).length;
+  let langRows="";
+  Object.entries(LANGS).forEach(([k,L])=>{const unl=state.progress[k]||1;const pct=Math.round(Math.min(unl-1,L.units.length)/L.units.length*100);
+    if(state.progress[k]||k===state.currentLang){langRows+=`<div class="langprog"><div class="lp-av">${avatar(L.av)}</div><div style="flex:1"><div style="font-weight:800;color:var(--brown);font-size:13px">${FLAGS[k]} ${L.name}</div><div class="lp-bar"><div class="lp-fill" style="width:${pct}%"></div></div></div><div style="font-weight:800;color:var(--muted);font-size:12px">${pct}%</div></div>`;}});
+  $("profile").innerHTML=`
+    <div class="scr-head"><h1>👤 Your Profile</h1></div>
+    <div class="card">
+      <div class="prof-row"><span>🔥 Day streak</span><b>${state.streak.count}</b></div>
+      <div class="prof-row"><span>⭐ Total XP</span><b>${state.totalXP}</b></div>
+      <div class="prof-row"><span>🎓 Units completed</span><b>${unitsDone}</b></div>
+      <div class="prof-row"><span>🌻 Languages started</span><b>${started}</b></div>
+    </div>
+    <div class="card"><h3>🌱 Garden</h3>
+      <div class="prof-row"><span>Growing plants</span><b>${plants}</b></div>
+      <div class="prof-row"><span>💧 Water · 🌱 Seeds</span><b>${state.garden.water} · ${state.garden.seeds}</b></div>
+      <div class="prof-row"><span>🏡 Rare estates</span><b>${state.garden.houses}</b></div>
+    </div>
+    <div style="padding:0 16px">${langRows}</div>
+    <div class="card"><h3>🐘 Meet Tembo</h3><p>Watch the welcome walkthrough again.</p>
+      <div style="margin-top:12px"><button class="btn btn-primary btn-wide" onclick="showOnboard(0)">Replay intro</button></div></div>
+    <div class="card"><h3>Reset</h3><p>Clear all progress, XP and your garden.</p>
+      <div style="margin-top:12px"><button class="btn btn-ghost btn-wide" onclick="resetAll()">Reset everything</button></div></div>`;
+}
+function resetAll(){if(confirm("Reset ALL progress and your garden?")){state=defaultState();state.currentLang=null;saveState();showLangPicker(true);}}
+function resetAll(){if(confirm("Reset ALL progress and your garden?")){state=defaultState();state.currentLang=null;saveState();showLangPicker(true);}}
+
+/* ---------- CHAT: Help FAQ (offline) + AI voice shell ---------- */
+let chatMode="help";
+let helpLog=[{who:"bot",text:"Hi! I'm Tembo 🐘. Ask me anything about how Afrology works — the garden, leaves, hints, streaks, or languages."}];
+let aiLog=[];
+function setChatMode(m){chatMode=m;if(m==="ai"&&aiLog.length===0){const L=LANGS[state.currentLang]||LANGS.swahili;const g=L.units[0].vocab[0];aiLog.push({who:"bot",text:g.t,gloss:g.e+"  ·  tap 🎙️ and reply!"});}renderChat();}
+function renderChat(){
+  $("chat").innerHTML=`<div class="scr-head"><h1>💬 Chat</h1></div>
+   <div class="seg"><button class="seg-btn ${chatMode==='ai'?'on':''}" onclick="setChatMode('ai')">🎙️ AI Voicechat</button><button class="seg-btn ${chatMode==='help'?'on':''}" onclick="setChatMode('help')">💬 AI Chat</button></div>
+   <div id="chatBody"></div>`;
+  renderChatBody();
+}
+function msgHTML(log){return log.map(m=>{const av=m.who==='bot'?`<div class="m-av">${elephant()}</div>`:'';const gloss=m.gloss?`<span class="gloss">${m.gloss}</span>`:'';return `<div class="msg ${m.who}">${av}<div class="bubble">${m.text}${gloss}</div></div>`;}).join("");}
+function renderChatBody(){
+  const b=$("chatBody");if(!b)return;
+  if(chatMode==="help"){
+    if(typeof AI_CHAT_URL!=="undefined" && AI_CHAT_URL){
+      b.innerHTML=`<div class="demo-note" style="margin:0 0 8px">🐘 Chat with Tembo — type in Amharic or English, he replies in Amharic.</div>
+      <iframe src="${AI_CHAT_URL}" allow="microphone" style="width:100%;height:68vh;border:0;border-radius:16px;background:#0f1c2e"></iframe>`;
+    }else{
+      b.innerHTML=`<div class="demo-note">The AI chat isn't connected yet — the live chat link needs to be added.</div>`;
+    }
+  }else{
+    const L=LANGS[state.currentLang]||LANGS.swahili;
+    b.innerHTML=`<div class="voice-stage">
+      <div class="voice-orb idle" id="voiceOrb"><div class="orb-aura"></div><div class="orb-core"></div><div class="orb-dots"><span></span><span></span><span></span><span></span></div></div>
+      <div class="voice-status" id="voiceStatus">Tap the mic and speak ${L.name}</div>
+      <div class="voice-caption" id="voiceCaption"></div>
+      <button class="mic-big" id="micBtn" onclick="micTalk()">🎙️</button>
+      <div class="composer" style="width:100%;max-width:440px"><input id="chatInput" placeholder="…or type in ${L.name}" autocomplete="off" onkeydown="if(event.key==='Enter')sendAI()"><button class="sendbtn" onclick="sendAI()">➤</button></div>
+      <div class="demo-note" style="margin-top:2px">Speak or type — Tembo replies in ${L.name}. Voice input needs Chrome + mic permission; typing always works.</div>
+    </div>`;
+    updateVoiceCaption();
+  }
+  const m=$("msgs");if(m)m.scrollTop=m.scrollHeight;
+}
+function setVoiceState(s,status){const o=$("voiceOrb");if(o)o.className="voice-orb "+s;if(status){const st=$("voiceStatus");if(st)st.textContent=status;}}
+function updateVoiceCaption(){const el=$("voiceCaption");if(!el)return;const you=[...aiLog].reverse().find(m=>m.who==='you');const bot=[...aiLog].reverse().find(m=>m.who==='bot');el.innerHTML=(you?`<div class="cap-you">You: ${you.text}</div>`:'')+(bot?`<div class="cap-bot">${bot.text}${bot.gloss?`<span class="gloss">${bot.gloss}</span>`:''}</div>`:'');}
+function toggleVoiceType(){const t=$("voiceTypeBar");if(t)t.classList.toggle("hidden");const i=$("chatInput");if(i&&!t.classList.contains("hidden"))i.focus();}
+function faqAnswer(q){
+  q=(q||"").toLowerCase();const has=(...w)=>w.some(x=>q.includes(x));
+  if(has("garden","plant","water","grow","seed","wilt","rot")) return "🌻 Finish lessons to earn 💧 water, 🌱 seeds, and rare 🏡 estates. In the Garden tab, tap a plot to plant, and tap a plant to water it until it blooms. Stop practising and it wilts — so keep coming back!";
+  if(has("leaf","leaves","heart","life","lives")) return "🍃 Leaves are your lives in a lesson. You start with 5 and lose one for each wrong answer. Run out and the lesson ends — but you can retry anytime.";
+  if(has("hint")) return "❓ Tap the Hint button under a question for a clue (first letter, length, and how it sounds). You get 3 hints per lesson.";
+  if(has("streak","daily")) return "🔥 Your streak counts the days in a row you practise. One lesson a day keeps it alive — and keeps your garden healthy!";
+  if(has("audio","voice","sound","record","speak","pronounce","pronunciation")) return "🔊 Tap the speaker on a word to hear it. Real native-speaker recordings can be added by dropping audio files in the app's audio folder (see the recording checklist).";
+  if(has("language","languages","which")) return "🌍 Afrology teaches 10 languages: Swahili, Hausa, Yoruba, Igbo, Oromo, Amharic, Shona, Zulu, Fula and Somali. Tap the flag on the Learn screen to switch.";
+  if(has("unlock","lock","unit","level","next")) return "🔒 Units unlock in order. Finish the current unit (with leaves to spare) to open the next. Hover or tap a locked unit to preview what it teaches.";
+  if(has("xp","point","score","reward","league","leaderboard")) return "⭐ You earn XP for correct answers and garden rewards for finishing lessons. Grow the biggest garden to climb the 🏆 Garden League!";
+  if(has("hi","hello","hey","habari","sawubona")) return "Hello! 👋 I'm Tembo. Ask me anything about how Afrology works.";
+  if(has("start","begin","how do i","how to")) return "▶ Go to the Learn tab and tap the glowing Begin tile to start. Answer the questions to earn XP and garden rewards!";
+  return "I can help with how Afrology works — try the garden, leaves, hints, streaks, languages, or how to start. 🐘";
+}
+function sendHelp(){const inp=$("chatInput");if(!inp)return;const t=inp.value.trim();if(!t)return;helpLog.push({who:"you",text:t});helpLog.push({who:"bot",text:faqAnswer(t)});renderChatBody();}
+/* Connect a real AI service here (needs API key). Returns null in demo mode. */
+function aiHistoryForAPI(){return aiLog.slice(-8).map(m=>({role:m.who==='you'?'user':'assistant',content:m.text}));}
+/* ===== Real AI via YOUR backend (no keys in the app) =====
+   When you deploy a server that holds your OpenAI key, put its URL here.
+   The app POSTs {lang, history} and expects {text, gloss} back.
+   Until then this returns null and the AI chat runs in friendly practice mode. */
+const AI_BACKEND_URL=""; // e.g. "https://your-server.com/afrology-ai"
+const AI_CHAT_URL="https://d712972bfaba1b36bd.gradio.live"; // live Tembo AI chat (Colab/Gradio); update this when the link changes
+async function callRealAI(userText,lang){
+  if(!AI_BACKEND_URL) return null;
+  const L=LANGS[state.currentLang]||LANGS.swahili;
+  try{
+    const r=await fetch(AI_BACKEND_URL,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({language:L.name,history:aiHistoryForAPI()})});
+    if(!r.ok) return null;
+    const d=await r.json();
+    if(d&&d.text) return {text:d.text,gloss:d.gloss||""};
+    return null;
+  }catch(e){return null;}
+}
+function aiScripted(){const L=LANGS[state.currentLang]||LANGS.swahili;const bank=[].concat(L.units[0].vocab,L.units[1].vocab);const p=bank[Math.floor(Math.random()*bank.length)];return {text:p.t,gloss:p.e+"  ·  your turn!"};}
+async function aiRespond(userText){
+  const L=LANGS[state.currentLang]||LANGS.swahili;
+  setVoiceState('speaking','Tembo is speaking…');
+  let reply=null; try{reply=await callRealAI(userText,L.ttsLang);}catch(e){}
+  if(reply&&typeof reply==='object'){aiLog.push({who:"bot",text:reply.text,gloss:reply.gloss||""});}
+  else if(reply){aiLog.push({who:"bot",text:reply});}
+  else{const s=aiScripted();aiLog.push({who:"bot",text:s.text,gloss:s.gloss});}
+  updateVoiceCaption();
+  const bot=aiLog[aiLog.length-1];
+  robotSayLang(bot.text,L.ttsLang,()=>setVoiceState('idle','Tap the mic to reply'));
+}
+function sendAI(){const inp=$("chatInput");if(!inp)return;const t=inp.value.trim();if(!t)return;inp.value="";aiLog.push({who:"you",text:t});updateVoiceCaption();aiRespond(t);}
+function micTalk(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){toast("Voice input needs Chrome — tap ⌨️ Type instead 🐘");return;}
+  const L=LANGS[state.currentLang]||LANGS.swahili;const rec=new SR();rec.lang=L.ttsLang||"en";rec.interimResults=false;rec.maxAlternatives=1;
+  setVoiceState('listening','Listening…');
+  rec.onresult=e=>{const said=e.results[0][0].transcript;aiLog.push({who:"you",text:said});updateVoiceCaption();aiRespond(said);};
+  rec.onerror=()=>{setVoiceState('idle','Tap the mic to reply');toast("Didn't catch that — try again or type it");};
+  rec.onend=()=>{const o=$("voiceOrb");if(o&&o.classList.contains('listening'))setVoiceState('idle','Tap the mic to reply');};
+  try{rec.start();}catch(e){setVoiceState('idle','Tap the mic to reply');toast("Couldn't start the mic — type your reply instead");}
+}
+function robotSayLang(text,lang,onend){
+  try{
+    if(!text||!("speechSynthesis"in window)){if(onend)setTimeout(onend,1500);return;}
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);u.lang=lang||"en";u.rate=.85;
+    let done=false;const fin=()=>{if(done)return;done=true;if(onend)onend();};
+    u.onend=fin;u.onerror=fin;speechSynthesis.speak(u);
+    setTimeout(()=>{if(!speechSynthesis.speaking)fin();},4500);
+  }catch(e){if(onend)setTimeout(onend,1500);}
+}
+
+/* ---------- VOICE RECORDER (native audio, in-app) ---------- */
+let recLang="swahili", mediaRec=null, recChunks=[], recBlobs={};
+function openRecorder(){recLang=state.currentLang||"swahili";
+  const opts=Object.entries(LANGS).map(([k,L])=>`<option value="${k}" ${k===recLang?"selected":""}>${FLAGS[k]} ${L.name}</option>`).join("");
+  showOverlay("recorder");$("recLang").innerHTML=opts;renderRecList();}
+function recWords(lang){const L=LANGS[lang];const w=[];L.units.forEach(u=>u.vocab.forEach(v=>w.push(v)));return w;}
+function renderRecList(){
+  recLang=$("recLang").value||recLang;
+  const words=recWords(recLang);let rows="";
+  words.forEach((v,i)=>{const clip=slugify(v.p||v.e);const url=recBlobs[recLang+"/"+clip];
+    rows+=`<div class="rec-row"><div class="rec-w"><b>${v.t}</b><span>${v.e} · ${v.p}</span></div>
+      <button class="rec-btn ${url?'saved':''}" id="rb_${i}" onclick="recToggle('${clip}',${i})">${url?'↺':'●'}</button>
+      ${url?`<button class="rec-play" onclick="recPlay('${clip}')">▶</button><a class="rec-dl" href="${url}" download="${clip}.webm">⤓</a>`:''}</div>`;});
+  $("recList").innerHTML=rows;
+}
+async function recToggle(clip,i){
+  if(mediaRec&&mediaRec.state==="recording"){mediaRec.stop();return;}
+  try{
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast("Mic needs Chrome over http://localhost");return;}
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    recChunks=[];mediaRec=new MediaRecorder(stream);
+    const btn=$("rb_"+i);if(btn){btn.textContent="■";btn.classList.add("live");}
+    mediaRec.ondataavailable=e=>{if(e.data&&e.data.size)recChunks.push(e.data);};
+    mediaRec.onstop=()=>{const blob=new Blob(recChunks,{type:"audio/webm"});recBlobs[recLang+"/"+clip]=URL.createObjectURL(blob);stream.getTracks().forEach(t=>t.stop());renderRecList();toast("Saved "+clip+".webm — download & drop in audio/"+recLang+"/");};
+    mediaRec.start();
+  }catch(e){toast("Couldn't access the mic — allow it & use http://localhost");}
+}
+function recPlay(clip){const u=recBlobs[recLang+"/"+clip];if(u){try{new Audio(u).play();}catch(e){}}}
+
+/* ---------- LEADERBOARD (mock, game style) ---------- */
+function gardenScore(){const G=state.garden;let s=0;G.plots.forEach(p=>{if(p.planted&&!p.wilted)s+=p.stage+2;});s+=G.houses*10;return s+Math.floor(state.totalXP/40);}
+function openLeaderboard(){
+  const rivals=[{n:"Amara",s:68,g:"🌳"},{n:"Kwame",s:57,g:"🌻"},{n:"Zola",s:49,g:"🌸"},{n:"Tunde",s:41,g:"🌿"},{n:"Nia",s:33,g:"🌱"},{n:"Sefu",s:26,g:"🌱"},{n:"Layla",s:19,g:"🌱"},{n:"Obi",s:12,g:"🌱"}];
+  const you={n:"You",s:gardenScore(),g:"🐘",you:true};
+  const all=[...rivals,you].sort((a,b)=>b.s-a.s);const top=all.slice(0,3);
+  const pod=(p,rank,cls)=>p?`<div class="pod ${cls}"><div class="medal">${rank===1?"🥇":rank===2?"🥈":"🥉"}</div><div class="pav">${p.g}</div><div class="pname">${p.n}${p.you?" (you)":""}</div><div class="psc">${p.s}</div><div class="bar"></div></div>`:"";
+  let html=`<div class="lb-title">🏆 Garden League</div><div class="lb-sub">Grow the biggest garden to reach #1</div>
+    <div class="podium">${pod(top[1],2,'p2')}${pod(top[0],1,'p1')}${pod(top[2],3,'p3')}</div><div class="lb-rows">`;
+  all.forEach((p,i)=>{html+=`<div class="lb-row ${p.you?'you':''}" style="animation-delay:${i*45}ms"><div class="lb-rank">${i+1}</div><div class="lb-gard">${p.g}</div><div class="lb-name">${p.n}${p.you?' (you)':''}</div><div class="lb-score">${p.s} pts</div></div>`;});
+  html+=`</div>`;
+  $("lbInner").innerHTML=html;showOverlay("leaderboard");
+}
+
+/* ---------- audio ---------- */
+const ALLOW_ROBOT_FALLBACK=true;
+function playClip(clip,ttsText){
+  if(!clip||!curKey)return;
+  const exts=["mp3","webm","wav","ogg","m4a"];let i=0;
+  const tryNext=()=>{ if(i>=exts.length){ if(ALLOW_ROBOT_FALLBACK)robotSay(ttsText); return; }
+    const a=new Audio("audio/"+curKey+"/"+clip+"."+exts[i++]); a.addEventListener("error",tryNext); a.play().catch(tryNext); };
+  tryNext();
+}
+function robotSay(text){try{if(!text||!("speechSynthesis"in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=cur&&cur.ttsLang?cur.ttsLang:"en";u.rate=.8;speechSynthesis.speak(u);}catch(e){}}
+
+/* ===== DEMO CHAT + VOICE: Swahili & Amharic (these override the chat functions above) ===== */
+const DEMO={
+ swahili:{name:"Swahili",flag:"🇹🇿",rec:"sw-TZ",tts:"sw",
+  phrases:[{t:"Habari!",e:"Hi!"},{t:"Jina langu ni Natalie.",e:"My name is Natalie."},{t:"Habari yako?",e:"How are you?"},{t:"Nzuri sana, asante.",e:"I'm very good, thank you."},{t:"Uwe na siku njema!",e:"Have a nice day!"}],
+  r:{hello:{t:"Habari! Mimi ni Tembo. Tuzungumze Kiswahili! 🐘",e:"Hi! I'm Tembo. Let's talk in Swahili!"},
+   greet:{t:"Habari! Karibu sana!",e:"Hi! You're very welcome!"},
+   name:n=>({t:`Nimefurahi kukutana nawe, ${n}!`,e:`Nice to meet you, ${n}!`}),
+   askname:{t:"Jina langu ni Tembo! 🐘",e:"My name is Tembo!"},
+   how:{t:"Nzuri sana! Na wewe je?",e:"I'm very good! And you?"},
+   good:{t:"Vizuri sana! Hongera! 🎉",e:"Very good! Well done!"},
+   thanks:{t:"Karibu sana!",e:"You're very welcome!"},
+   bye:{t:"Asante! Uwe na siku njema! Kwaheri! 👋",e:"Thank you! Have a nice day! Goodbye!"},
+   unknown:{t:"Samahani, sijaelewa. Jaribu: \"Habari yako?\"",e:"Sorry, I didn't understand. Try: \"How are you?\""}}},
+ amharic:{name:"Amharic",flag:"🇪🇹",rec:"am-ET",tts:"am",
+  phrases:[{t:"ሰላም!",p:"selam",e:"Hi!"},{t:"ስሜ ናታሊ ነው።",p:"sime Natali new",e:"My name is Natalie."},{t:"እንዴት ነህ?",p:"indet neh",e:"How are you?"},{t:"ደህና ነኝ፣ አመሰግናለሁ።",p:"dehna negn, ameseginalehu",e:"I'm good, thank you."},{t:"መልካም ቀን!",p:"melkam ken",e:"Have a nice day!"}],
+  r:{hello:{t:"ሰላም! እኔ ቴምቦ ነኝ። በአማርኛ እናውራ! 🐘",p:"selam! ine Tembo negn. be-amarigna enawra!",e:"Hi! I'm Tembo. Let's talk in Amharic!"},
+   greet:{t:"ሰላም! እንኳን ደህና መጣሽ!",p:"selam! inkwan dehna metash!",e:"Hi! Welcome!"},
+   name:n=>({t:`ስለተዋወቅን ደስ ብሎኛል፣ ${n}!`,p:`siletewawek'n des bilognal, ${n}!`,e:`Nice to meet you, ${n}!`}),
+   askname:{t:"ስሜ ቴምቦ ነው! 🐘",p:"sime Tembo new!",e:"My name is Tembo!"},
+   how:{t:"ደህና ነኝ፣ አመሰግናለሁ! አንቺስ?",p:"dehna negn, ameseginalehu! anchis?",e:"I'm good, thank you! And you?"},
+   good:{t:"በጣም ጥሩ! 🎉",p:"betam tiru!",e:"Very good!"},
+   thanks:{t:"ምንም አይደል!",p:"minim aydel!",e:"You're welcome!"},
+   bye:{t:"መልካም ቀን! ቻው! 👋",p:"melkam ken! chaw!",e:"Have a nice day! Bye!"},
+   unknown:{t:"ይቅርታ፣ አልገባኝም።",p:"yiqirta, algebagnim",e:"Sorry, I didn't understand. Try \"ሰላም\" or \"እንዴት ነህ?\""}}}
+};
+const SOON=["Yoruba","Zulu","Igbo","Hausa","Oromo","Shona","Somali","Tigrinya","Fula","Tamazight"];
+let demoLang=null,demoMode="chat",demoBusy=false,demoRec=null;
+const demoLogs={swahili:[],amharic:[]},demoTarget={swahili:0,amharic:0};
+function DL(){if(!demoLang)demoLang=(state&&state.currentLang==="amharic")?"amharic":"swahili";return demoLang;}
+function dEsc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function dNorm(s){return (s||"").toLowerCase().normalize("NFC").replace(/[.,!?¿¡።፣፤፥፦፧'"’\-]/g," ").replace(/\s+/g," ").trim();}
+function dLev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let pr=Array.from({length:n+1},(_,j)=>j);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(pr[j]+1,c[j-1]+1,pr[j-1]+(a[i-1]===b[j-1]?0:1));pr=c;}return pr[n];}
+function dScore(heard,ph){const h=dNorm(heard);return Math.max(...[ph.t,ph.p||ph.t].map(x=>{x=dNorm(x);return 1-dLev(h,x)/Math.max(h.length,x.length,1);}));}
+function dSay(text,rom,onend,clip){
+  if(clip){try{speechSynthesis.cancel();}catch(e){}const a=new Audio(clip);let ok=false;a.onended=()=>{if(onend)onend();};a.onerror=()=>{if(!ok){ok=true;dSay(text,rom,onend);}};a.play().then(()=>{ok=true;}).catch(()=>{if(!ok){ok=true;dSay(text,rom,onend);}});return;}
+  try{
+    if(!("speechSynthesis" in window)){if(onend)setTimeout(onend,1200);return;}
+    speechSynthesis.cancel();const code=DEMO[DL()].tts;
+    const v=speechSynthesis.getVoices().find(x=>x.lang.toLowerCase().startsWith(code));
+    const u=new SpeechSynthesisUtterance((v?text:(rom||text)).replace(/[🐘🎉👋]/gu,""));
+    if(v){u.voice=v;u.lang=v.lang;}u.rate=.85;
+    let done=false;const fin=()=>{if(done)return;done=true;if(onend)onend();};u.onend=fin;u.onerror=fin;
+    speechSynthesis.speak(u);setTimeout(()=>{if(!speechSynthesis.speaking)fin();},5000);
+  }catch(e){if(onend)setTimeout(onend,1200);}
+}
+if("speechSynthesis" in window)speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+function dIntent(msg){
+  const t=msg.toLowerCase(),has=a=>a.some(k=>t.includes(k));
+  const m=t.match(/(?:my name is|jina langu ni|naitwa|i am|i'm)\s+([a-zÀ-ɏ]+)/i);
+  if(m&&!["good","fine","great","well","ok","okay"].includes(m[1]))return{k:"name",n:m[1][0].toUpperCase()+m[1].slice(1)};
+  if(has(["ስሜ","sime "])){const w=msg.replace(/[።!.]/g,"").split(/\s+/);return{k:"name",n:(w[1]==="ናታሊ"?"Natalie":w[1])||"Natalie"};}
+  if(has(["your name","jina lako","ስምህ","ስምሽ"]))return{k:"askname"};
+  if(has(["how are you","habari yako","hujambo","u hali gani","mambo","እንዴት","indet"]))return{k:"how"};
+  if(has(["bye","nice day","kwaheri","siku njema","ቻው","chaw","መልካም","melkam"]))return{k:"bye"};
+  if(has(["thank","asante","አመሰግናለሁ","ameseginalehu"]))return{k:"thanks"};
+  if(has(["good","fine","great","nzuri","sijambo","salama","poa","ደህና","dehna","ጥሩ","tiru"]))return{k:"good"};
+  if(has(["hi","hello","hey","habari","jambo","salaam","selam","ሰላም"]))return{k:"greet"};
+  return{k:"unknown"};
+}
+async function dReply(msg){
+  if(AI_BACKEND_URL){try{const r=await callRealAI(msg);if(r&&r.text)return{t:r.text,e:r.gloss||""};}catch(e){}}
+  const it=dIntent(msg),R=DEMO[DL()].r;return {...(it.k==="name"?R.name(it.n):R[it.k]),k:it.k};
+}
+function dLog(){const L=DL();if(!demoLogs[L].length)demoLogs[L].push({who:"bot",...DEMO[L].r.hello,k:"hello"});return demoLogs[L];}
+function dClip(k){return k?`audio/${DL()}/chat/reply-${k}.mp3`:null;}
+function dMsgHTML(m,i){
+  if(m.who==="you")return `<div class="msg you"><div class="bubble">${dEsc(m.t)}</div></div>`;
+  const body=m.typing?`<div class="bubble typing"><span></span><span></span><span></span></div>`:
+   `<div class="bubble">${dEsc(m.t)}${m.p?`<span class="rom">${dEsc(m.p)}</span>`:""}${m.e?`<span class="gloss">${dEsc(m.e)}</span>`:""}<button class="say" onclick="dSayIdx(${i})">🔊 Listen</button></div>`;
+  return `<div class="msg bot"><div class="m-av">${elephant()}</div>${body}</div>`;
+}
+function dSayIdx(i){const m=dLog()[i];if(m)dSay(m.t,m.p,null,dClip(m.k));}
+function setChatMode(m){demoMode=(m==="ai"||m==="voice")?"voice":"chat";renderChat();}
+function setDemoLang(v){if(!DEMO[v]){toast("Coming soon 🐘");renderChat();return;}demoLang=v;if(demoRec){try{demoRec.stop();}catch(e){}}toast(DEMO[v].flag+" Switched to "+DEMO[v].name);renderChat();}
+function renderChat(){
+  const L=DL();
+  const opts=Object.entries(DEMO).map(([k,d])=>`<option value="${k}" ${k===L?"selected":""}>${d.flag} ${d.name}</option>`).join("")+SOON.map(n=>`<option disabled>${n} · soon</option>`).join("");
+  $("chat").innerHTML=`<div class="scr-head chat-head"><h1>💬 Chat</h1><div class="lang-drop"><select aria-label="Language" onchange="setDemoLang(this.value)">${opts}</select></div></div>
+   <div class="seg"><button class="seg-btn ${demoMode==='chat'?'on':''}" onclick="setChatMode('chat')">💬 AI Chat</button><button class="seg-btn ${demoMode==='voice'?'on':''}" onclick="setChatMode('voice')">🎙️ AI Voicechat</button></div>
+   <div id="chatBody"></div>`;
+  renderChatBody();
+}
+function renderChatBody(){
+  const b=$("chatBody");if(!b)return;const L=DL(),D=DEMO[L];
+  if(demoMode==="chat"){
+    b.innerHTML=`<div class="dchat"><div class="msgs" id="msgs">${dLog().map(dMsgHTML).join("")}</div>
+      <div class="chips">${D.phrases.map((p,i)=>`<button class="pchip" onclick="dChip(${i})">${dEsc(p.t)}</button>`).join("")}</div>
+      <div class="composer"><button class="mini-mic" id="dMic" onclick="dChatMic()">🎙️</button><input id="chatInput" placeholder="${L==="amharic"?"በአማርኛ ይጻፉ… (type in Amharic)":"Andika kwa Kiswahili… (type in Swahili)"}" autocomplete="off" onkeydown="if(event.key==='Enter')dSend(this.value)"><button class="sendbtn" onclick="dSend($('chatInput').value)">➤</button></div></div>`;
+    const m=$("msgs");if(m)m.scrollTop=m.scrollHeight;
+  }else{
+    b.innerHTML=`<div class="voice-stage">
+      <div class="say-card"><button class="sc-nav" onclick="dTarget(-1)">‹</button><div class="sc-mid" id="scMid"></div><button class="sc-nav" onclick="dTarget(1)">›</button></div>
+      <div class="voice-orb idle" id="voiceOrb"><div class="orb-aura"></div><div class="orb-core"></div><div class="orb-dots"><span></span><span></span><span></span><span></span></div></div>
+      <div class="voice-status" id="voiceStatus">Tap the mic and say it in ${D.name}</div>
+      <div class="score" id="dScore"></div>
+      <div class="voice-caption" id="voiceCaption"></div>
+      <button class="mic-big" id="micBtn" onclick="micTalk()">🎙️</button>
+      ${location.protocol==="file:"?`<div class="demo-note" style="margin:0;border-color:var(--gold)">🎙️ The mic only works from a web link (http://localhost or your GitHub page), not a file opened from Finder. Typing works everywhere.</div>`:""}
+      <div class="composer" style="width:100%;max-width:440px"><input id="chatInput" placeholder="…or type in ${D.name}" autocomplete="off" onkeydown="if(event.key==='Enter')sendAI()"><button class="sendbtn" onclick="sendAI()">➤</button></div>
+    </div>`;
+    dRenderTarget();
+  }
+}
+function dRenderTarget(){const el=$("scMid");if(!el)return;const L=DL(),p=DEMO[L].phrases[demoTarget[L]];
+  el.innerHTML=`<div class="sc-lbl">Say this · ${demoTarget[L]+1}/${DEMO[L].phrases.length}</div><div class="sc-t">${dEsc(p.t)}</div>${p.p?`<div class="sc-r">${dEsc(p.p)}</div>`:""}<div class="sc-e">${dEsc(p.e)}</div><button class="sc-hear" onclick="dSayTarget()">🔊 Hear it</button>`;}
+function dSayTarget(){const L=DL(),p=DEMO[L].phrases[demoTarget[L]];dSay(p.t,p.p,null,`audio/${L}/chat/phrase-${demoTarget[L]+1}.mp3`);}
+function dTarget(d){const L=DL(),n=DEMO[L].phrases.length;demoTarget[L]=(demoTarget[L]+d+n)%n;dRenderTarget();const s=$("dScore");if(s){s.textContent="";s.className="score";}}
+function dChip(i){const p=DEMO[DL()].phrases[i];dSend(p.t);}
+async function dSend(text){
+  text=(text||"").trim();if(!text||demoBusy)return;demoBusy=true;const L=DL(),log=dLog();
+  log.push({who:"you",t:text});log.push({who:"bot",typing:true});renderChatBody();
+  const r=await dReply(text);await new Promise(x=>setTimeout(x,650));
+  demoLogs[L]=demoLogs[L].filter(m=>!m.typing);demoLogs[L].push({who:"bot",...r});demoBusy=false;
+  if(L===DL()&&demoMode==="chat"){renderChatBody();dSay(r.t,r.p,null,dClip(r.k));}
+}
+function dListen(onText,onState){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){toast("Voice needs Google Chrome — you can type instead 🐘");return false;}
+  const rec=new SR();rec.lang=DEMO[DL()].rec;rec.continuous=true;rec.interimResults=true;rec.maxAlternatives=1;
+  let finalTxt="",interim="",err=null,silence=null,cap=null,ended=false;
+  const stopSoon=ms=>{clearTimeout(silence);silence=setTimeout(()=>{try{rec.stop();}catch(e){}},ms);};
+  rec.onresult=e=>{finalTxt="";interim="";for(let k=0;k<e.results.length;k++){const r=e.results[k];if(r.isFinal)finalTxt+=r[0].transcript+" ";else interim+=r[0].transcript+" ";}
+    const all=(finalTxt+interim).trim();if(onState)onState("interim",all);stopSoon(1800);};
+  rec.onerror=e=>{if(e.error!=="no-speech"&&e.error!=="aborted")err=e.error;};
+  rec.onend=()=>{if(ended)return;ended=true;clearTimeout(silence);clearTimeout(cap);demoRec=null;const all=(finalTxt+interim).trim();
+    if(all)onText(all);else if(onState)onState("fail",err||"no-speech");};
+  try{rec.start();demoRec=rec;stopSoon(8000);cap=setTimeout(()=>{try{rec.stop();}catch(e){}},15000);if(onState)onState("start");return true;}
+  catch(e){toast("Couldn't start the mic — type instead");return false;}
+}
+function dChatMic(){
+  if(demoRec){demoRec.stop();return;}
+  const b=$("dMic");
+  dListen(t=>{if(b)b.classList.remove("live");dSend(t);},(s,x)=>{
+    if(s==="start"&&b)b.classList.add("live");
+    if(s==="interim"){const i=$("chatInput");if(i)i.value=x;}
+    if(s==="fail"){if(b)b.classList.remove("live");toast(x==="not-allowed"||x==="service-not-allowed"?(location.protocol==="file:"?"Mic needs a web link — open via localhost or GitHub":"Click the 🎤 icon in Chrome's address bar → Allow"):(x==="network"?"Voice needs Google Chrome (not Brave/Safari)":"Didn't hear anything — speak a bit louder and try again 🐘"));}
+  });
+}
+function updateVoiceCaption(you,bot){const el=$("voiceCaption");if(!el)return;
+  el.innerHTML=(you?`<div class="cap-you">You said: “${dEsc(you)}”</div>`:"")+(bot?`<div class="cap-bot">${dEsc(bot.t)}${bot.p?`<span class="gloss" style="color:var(--gold)">${dEsc(bot.p)}</span>`:""}<span class="gloss">${dEsc(bot.e||"")}</span></div>`:"");}
+async function dVoiceTurn(said){
+  const L=DL(),p=DEMO[L].phrases[demoTarget[L]],sc=dScore(said,p),s=$("dScore");
+  if(s){if(sc>=.7){s.textContent="✅ Great pronunciation! "+Math.round(sc*100)+"%";s.className="score ok";}
+   else if(sc>=.4){s.textContent="👍 Close! "+Math.round(sc*100)+"%";s.className="score mid";}
+   else{s.textContent="";s.className="score";}}
+  setVoiceState("speaking","Tembo is speaking…");
+  const r=await dReply(said);updateVoiceCaption(said,r);
+  dSay(r.t,r.p,()=>{setVoiceState("idle","Tap the mic to reply");if(sc>=.4&&demoTarget[L]<DEMO[L].phrases.length-1){demoTarget[L]++;dRenderTarget();}},dClip(r.k));
+}
+function sendAI(){const i=$("chatInput");if(!i)return;const t=i.value.trim();if(!t)return;i.value="";dVoiceTurn(t);}
+function micTalk(){
+  if(demoRec){demoRec.stop();return;}
+  dListen(t=>dVoiceTurn(t),(s,x)=>{
+    if(s==="start")setVoiceState("listening","Listening… speak, then pause (or tap 🎙️ when done)");
+    if(s==="interim")updateVoiceCaption(x,null);
+    if(s==="fail"){setVoiceState("idle","Tap the mic and try again");toast(x==="not-allowed"||x==="service-not-allowed"?(location.protocol==="file:"?"Mic needs a web link — open via localhost or GitHub":"Click the 🎤 icon in Chrome's address bar → Allow"):(x==="network"?"Voice needs Google Chrome (not Brave/Safari)":"Didn't hear anything — speak a bit louder and try again 🐘"));}
+  });
+}
+
+/* ---------- init ---------- */
+loadState();applyDecay();
+if(!state.seenIntro){showOnboard(0);}
+else if(!state.currentLang){showLangPicker(true);}
+else{showTab("learn");}
+</script>
+</body>
+</html>
